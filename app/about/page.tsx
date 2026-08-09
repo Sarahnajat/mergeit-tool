@@ -1,129 +1,179 @@
 "use client";
 
 import {
-  Zap,
   SplitSquareHorizontal,
   Merge,
+  ArrowRightLeft,
   LockKeyhole,
-  Sparkles,
+  FilePenLine,
+  ArrowRight,
+  FileHeart,
 } from "lucide-react";
 import { MotionDiv } from "@/lib/motion";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import NavbarSection from "@/components/NavbarSection";
 import { FooterSection } from "@/components/FooterSection";
+
 const features = [
   {
     icon: SplitSquareHorizontal,
-    title: "Precision Splitting",
+    title: "Split with precision",
     description:
-      "Break down large subtitle files by exact time duration, specific line counts, or evenly into multiple files.",
+      "Divide subtitle files by duration, line count, or evenly across multiple files.",
   },
   {
     icon: Merge,
-    title: "Seamless Merging",
+    title: "Merge without cleanup",
     description:
-      "Combine multiple subtitle tracks into one flawlessly timed file without losing formatting or sync.",
+      "Combine translated subtitle parts back together while keeping original order and timing.",
+  },
+  {
+    icon: ArrowRightLeft,
+    title: "Convert with ease",
+    description:
+      "Switch seamlessly between SRT and ASS formats with no formatting loss.",
   },
   {
     icon: LockKeyhole,
-    title: "100% Private",
+    title: "Private by default",
     description:
-      "Everything happens locally right inside your browser. Your files never touch our servers.",
-  },
-  {
-    icon: Zap,
-    title: "Free & Instant",
-    description:
-      "No registration walls, no hidden fees, and no file size limits. Just drop your files and get to work.",
+      "Your files never leave your browser. Zero server uploads, completely local.",
   },
 ];
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-background py-32 px-6 font-dmSans relative overflow-hidden">
+    <>
       <NavbarSection />
-      {/* Subtle Background Pattern */}
-      <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,var(--border)_0px_1px,transparent_1px_8px)] opacity-30 mask-[radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)] pointer-events-none"></div>
-
-      <div className="max-w-5xl mx-auto space-y-24 relative z-10">
-        {/* HEADER SECTION */}
-        <section className="text-center space-y-8 max-w-3xl mx-auto">
-          <MotionDiv
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-          >
-            <Badge
-              variant="secondary"
-              className="px-4 py-1.5 text-[10px] font-mono font-bold  tracking-[0.25em] bg-primary/10 border border-primary/20 text-primary rounded-full mb-6"
-            >
-              About Our Tools
-            </Badge>
-
-            <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-foreground  leading-[0.95] mb-6">
-              Subtitle Management, <br className="hidden sm:block" />
-              <span className="text-muted-foreground">Simplified.</span>
-            </h1>
-
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              We understand the headaches of working with subtitle files. That’s
-              why we built a suite of simple, blazing-fast tools designed
-              specifically for content creators, translators, and video editors
-              to save time and effort.
-            </p>
-          </MotionDiv>
-        </section>
-
-        {/* CORE PILLARS GRID */}
-        <section>
-          <div className="grid md:grid-cols-2 gap-6">
-            {features.map((feature, idx) => (
-              <MotionDiv
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: idx * 0.1 }}
-                className="bg-card border border-border rounded-3xl p-8 hover:border-primary/40 transition-colors"
-              >
-                <div className="size-12 rounded-2xl bg-background border border-border flex items-center justify-center mb-6">
-                  <feature.icon className="size-5 text-primary" />
-                </div>
-                <h3 className="text-xl font-bold text-foreground tracking-tight mb-3">
-                  {feature.title}
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {feature.description}
-                </p>
-              </MotionDiv>
-            ))}
-          </div>
-        </section>
-
-        {/* COMMITMENT BANNER */}
-        <MotionDiv
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
+      <main className="min-h-screen bg-background py-20 px-6 font-dmSans">
+        <div
+          id="about"
+          className="max-w-4xl mx-auto space-y-20 relative z-10 scroll-mt-28"
         >
-          <div className="bg-primary/5 border border-primary/20 rounded-[2.5rem] p-10 md:p-16 text-center space-y-6 relative overflow-hidden">
-            <div className="absolute top-0 right-0 -mr-16 -mt-16 size-48 bg-primary/10 blur-3xl rounded-full pointer-events-none" />
+          {/* HEADER SECTION */}
+          <section className="text-center space-y-6 max-w-2xl mx-auto">
+            <MotionDiv
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+            >
+              <Badge
+                variant="secondary"
+                className="px-3.5 py-1 text-xs font-mono font-bold tracking-widest bg-primary/10 border border-primary/20 text-primary rounded-full mb-4 inline-flex items-center gap-1.5"
+              >
+                <FilePenLine className="size-3.5" />
+                BUILT FOR SUBTITLE WORK
+              </Badge>
 
-            <Sparkles className="size-8 text-primary mx-auto mb-4" />
-            <h2 className="text-2xl md:text-3xl font-black text-foreground tracking-tight">
-              Our Commitment
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              We are constantly refining our tools based on your feedback. Our
-              ultimate goal is to provide the most reliable, secure, and
-              user-friendly SRT management platform on the web.
-            </p>
-            <p className="text-xs font-mono font-bold text-muted-foreground  tracking-widest pt-4">
-              Last updated: September 2025
-            </p>
-          </div>
-        </MotionDiv>
-      </div>
+              <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-foreground leading-tight mb-4">
+                Subtitles,{" "}
+                <span className="text-primary">done in seconds.</span>
+              </h1>
+
+              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
+                MergeIt gives editors, translators, and creators simple,
+                lightning-fast tools for splitting, merging, and converting
+                subtitle files directly in the browser.
+              </p>
+            </MotionDiv>
+          </section>
+
+          {/* FEATURES GRID */}
+          <section>
+            <div className="grid md:grid-cols-2 gap-5">
+              {features.map((feature, idx) => (
+                <MotionDiv
+                  key={feature.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: idx * 0.08 }}
+                  className="
+                    bg-card
+                    border border-border
+                    rounded-2xl
+                    p-6
+                    transition-all duration-200
+                    hover:border-primary/40
+                    hover:shadow-sm
+                  "
+                >
+                  <div className="size-10 rounded-xl bg-primary/10 border border-primary/15 flex items-center justify-center mb-4">
+                    <feature.icon className="size-5 text-primary" />
+                  </div>
+                  <h3 className="text-lg font-bold text-foreground mb-1.5">
+                    {feature.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {feature.description}
+                  </p>
+                </MotionDiv>
+              ))}
+            </div>
+          </section>
+
+          
+          <section className="space-y-8 text-center pt-4">
+            {/* Header text above card */}
+            <MotionDiv
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              className="max-w-2xl mx-auto space-y-4"
+            >
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-foreground">
+                Fix subtitles fast. Use{" "}
+                <span className="text-primary">MergeIt.</span>
+              </h2>
+
+              <p className="text-muted-foreground text-base sm:text-lg leading-relaxed max-w-xl mx-auto">
+                Manual line splitting and file merging waste hours. MergeIt was
+                built so Content creators and translators can handle SRT files
+                in seconds.
+              </p>
+            </MotionDiv>
+
+            <MotionDiv
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="bg-card border border-border/80 rounded-[2.5rem] p-8 sm:p-12 md:p-14 text-center max-w-3xl mx-auto shadow-xl relative overflow-hidden"
+            >
+             
+              <div className="absolute -top-24 left-1/2 -translate-x-1/2 size-72 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+
+              <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold tracking-wider uppercase mb-6 relative z-10">
+                <FileHeart className="size-3.5" />
+                <span>100% FREE & LOCAL</span>
+              </div>
+
+              {/* Main Card Title */}
+              <h3 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-foreground mb-4 relative z-10">
+                One tool. All your subtitle needs.
+              </h3>
+
+              <p className="text-muted-foreground text-sm sm:text-base md:text-lg max-w-xl mx-auto mb-8 leading-relaxed relative z-10">
+                Trusted by creators who need fast, reliable SRT handling—clean,
+                convert, and manage subtitles directly in your browser.
+              </p>
+
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 relative z-10">
+                <Button
+                  size="lg"
+                  className="rounded-full px-7 py-3 h-12 text-sm font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-md transition-all duration-300 hover:scale-[1.02] cursor-pointer inline-flex items-center gap-2"
+                >
+                  Start Our Tools now
+                  <ArrowRight className="size-4" />
+                </Button>
+                <span className="text-xs sm:text-sm text-muted-foreground font-medium">
+                  Instant access • No account needed
+                </span>
+              </div>
+            </MotionDiv>
+          </section>
+        </div>
+      </main>
       <FooterSection />
-    </main>
+    </>
   );
 }

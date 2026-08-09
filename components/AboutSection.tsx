@@ -2,7 +2,7 @@
 
 import React from "react"
 import { MotionDiv } from "@/lib/motion"
-import { SplitIcon, MergeIcon, File} from "lucide-react" // example icons
+import { SplitIcon, MergeIcon, File} from "lucide-react" 
 
 // Define benefits as an array of objects
 const benefits = [

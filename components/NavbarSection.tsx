@@ -46,17 +46,29 @@ const navigationData: NavigationSection[] = [
 const CollaborateButton = ({ className }: { className?: string }) => (
   <Button
     className={cn(
-      "relative text-sm font-semibold rounded-full h-10 pl-5 pr-1.5 group transition-all duration-300 w-fit overflow-hidden bg-primary hover:bg-primary/95 text-primary-foreground shadow-sm hover:shadow-md flex items-center gap-3 cursor-pointer",
+      "relative text-sm font-semibold rounded-full h-10 pl-5 pr-1.5 group transition-all duration-300 w-fit overflow-hidden bg-primary hover:bg-primary/95 text-primary-foreground shadow-sm hover:shadow-md hover:-translate-y-0.5 flex items-center gap-3 cursor-pointer",
       className,
     )}
   >
     <span className="relative z-10">Star us on Github</span>
-    <div className="w-7 h-7 bg-primary-foreground text-primary rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12 shadow-xs">
+
+    <div
+      className="
+        relative z-10
+        w-7 h-7
+        bg-primary-foreground
+        text-primary
+        rounded-full
+        flex items-center justify-center
+        shadow-xs
+        transition-transform duration-300
+        group-hover:scale-110
+      "
+    >
       <GithubIcon />
     </div>
   </Button>
 );
-
 const Navbar = () => {
   const [sticky, setSticky] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
