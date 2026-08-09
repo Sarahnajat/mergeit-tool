@@ -18,16 +18,14 @@ export default function Home() {
    title="Merge it, Split it, Convert it"
    description="Professional subtitle management reimagined. Split, merge, and optimize your SRT files with precision timing and perfect formatting."
    features={["Split SRT files into multiple parts", "Merge multiple SRT files into one", "Convert SRT files to different Formats"]}
-    primaryButton={{
-      text: "Get Started",
-      href: "/",
-    
-    }}
-    secondaryButton={{
-      text: "Upload SRT File",
-      href: "/",
-    
-    }}
+   primaryButton={{
+    text: "Explore Features",
+    href: "#features",
+  }}
+  secondaryButton={{
+    text: "How It Works",
+    href: "#usage-guide",
+  }}
     visualContent={<HeroVisual />}
     />
     <UsageGuide />

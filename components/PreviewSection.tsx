@@ -8,6 +8,7 @@ import {
   ChevronDown,
   AlignLeft,
   ArrowRightLeft,
+  ScanEye
 } from "lucide-react";
 import {
   Select,
@@ -17,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-
+import {Badge} from "@/components/ui/badge";
 import { MotionDiv } from "@/lib/motion";
 
 const items: RadialNavItem[] = [
@@ -32,7 +33,7 @@ export default function PreviewSection() {
   >("split");
 
   return (
-    <section className="bg-background py-16 sm:py-24 lg:py-32 px-4 sm:px-6 lg:px-8 font-dmSans relative overflow-hidden w-full">
+    <section id="preview" className="bg-background py-16 sm:py-24 lg:py-32 px-4 sm:px-6 lg:px-8 font-dmSans relative overflow-hidden w-full">
       <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,var(--border)_0px_1px,transparent_1px_8px)] opacity-20 mask-[radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_110%)] pointer-events-none" />
 
       <div className="max-w-6xl mx-auto relative z-10 flex flex-col items-center">
@@ -42,9 +43,13 @@ export default function PreviewSection() {
           transition={{ duration: 0.4 }}
           className="flex flex-col items-center text-center gap-3 mb-8 max-w-xl px-2"
         >
-          <span className="text-[10px] font-mono text-muted-foreground  tracking-[0.3em]">
-            Discover What MergeIt Can Do
-          </span>
+    <Badge
+                variant="secondary"
+                className="px-3.5 py-1 text-xs font-mono font-bold tracking-widest bg-primary/10 border border-primary/20 text-primary rounded-full mb-4 inline-flex items-center gap-1.5"
+              >
+                <ScanEye size="4" />
+  Discover What MergeIt Can Do
+</Badge>
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-foreground tracking-tight  leading-tight">
             Split, <span className="text-primary">merge</span>, or convert.
           </h2>

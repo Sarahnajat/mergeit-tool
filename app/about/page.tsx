@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import NavbarSection from "@/components/NavbarSection";
 import { FooterSection } from "@/components/FooterSection";
+import Link from "next/link";
 
 const features = [
   {
@@ -158,13 +159,16 @@ export default function AboutPage() {
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 relative z-10">
-                <Button
-                  size="lg"
-                  className="rounded-full px-7 py-3 h-12 text-sm font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-md transition-all duration-300 hover:scale-[1.02] cursor-pointer inline-flex items-center gap-2"
-                >
-                  Start Our Tools now
-                  <ArrowRight className="size-4" />
-                </Button>
+              <Link href="/#features">
+  <Button
+    size="lg"
+    className="rounded-full px-7 py-3 h-12 text-sm font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-md transition-all duration-300 hover:scale-[1.02] cursor-pointer inline-flex items-center gap-2"
+  >
+    Start Our Tools now
+    <ArrowRight className="size-4" />
+  </Button>
+</Link>
+
                 <span className="text-xs sm:text-sm text-muted-foreground font-medium">
                   Instant access • No account needed
                 </span>

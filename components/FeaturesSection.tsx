@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { SplitSquareHorizontal, Merge, ArrowRightLeft } from "lucide-react";
+import { SplitSquareHorizontal, Merge, ArrowRightLeft, SquareStack } from "lucide-react";
 import { FileDropzone } from "./FileDropzone";
 import { MotionDiv } from "@/lib/motion";
 import SplitFilesPanel from "@/components/features/SplitFilesPanel";
@@ -11,7 +11,7 @@ import MergeFilesPanel from "./features/MergeFilesPanel";
 import ConvertFilesPanel from "./features/ConvertFilesPanel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-
+import {Badge} from "@/components/ui/badge"
 type ToolId = "split" | "merge" | "Convert";
 
 const tools: {
@@ -97,7 +97,7 @@ export const FeaturesSection = () => {
   };
 
   return (
-    <section className="bg-background py-16 sm:py-24 md:py-32 px-4 sm:px-6 min-h-screen font-dmSans relative overflow-hidden">
+    <section    id="features" className="bg-background py-16 sm:py-24 md:py-32 px-4 sm:px-6 min-h-screen font-dmSans relative overflow-hidden">
       <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,var(--border)_0px_1px,transparent_1px_8px)] opacity-40 mask-[radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto space-y-12 sm:space-y-16 relative z-10">
@@ -107,7 +107,15 @@ export const FeaturesSection = () => {
           transition={{ duration: 0.4 }}
           className="flex flex-col md:flex-row md:items-start justify-between gap-8 md:gap-12 border-b border-border pb-8 sm:pb-12"
         >
+          
           <div className="space-y-4 sm:space-y-6">
+          <Badge
+              variant="secondary"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1 text-xs font-mono font-bold tracking-widest bg-primary/10 border border-primary/20 text-primary rounded-full mb-3 uppercase"
+            >
+            <SquareStack size="4" />
+            ALL-IN-ONE
+          </Badge>
             <h2 className="text-4xl sm:text-6xl md:text-7xl font-black text-foreground tracking-tighter  leading-none">
               <span className="text-primary">Three</span> Tools.
               <br />

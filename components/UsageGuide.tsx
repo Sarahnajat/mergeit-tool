@@ -11,9 +11,11 @@ import {
   FileText,
   CheckCircle2,
   SlidersHorizontal,
+ 
+  FootprintsIcon
 } from "lucide-react";
 import { MotionDiv } from "@/lib/motion";
-
+import { Badge } from "./ui/badge";
 const steps = [
   {
     step: "STEP 01",
@@ -47,7 +49,7 @@ const steps = [
 
 export const UsageGuide = () => {
   return (
-    <section className="bg-background py-24 sm:py-32 px-4 sm:px-6 font-dmSans relative overflow-hidden">
+    <section id="usage-guide" className="bg-background py-24 sm:py-32 px-4 sm:px-6 font-dmSans relative overflow-hidden">
       {/* Background pattern */}
       <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,var(--border)_0px_1px,transparent_1px_8px)] opacity-40 mask-[radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)] pointer-events-none"></div>
 
@@ -59,11 +61,15 @@ export const UsageGuide = () => {
           transition={{ duration: 0.4 }}
           className="max-w-2xl text-left"
         >
-          <span className="text-[10px] font-mono text-muted-foreground  tracking-[0.3em]">
+          <Badge
+              variant="secondary"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1 text-xs font-mono font-bold tracking-widest bg-primary/10 border border-primary/20 text-primary rounded-full mb-3 uppercase"
+            >
+            <FootprintsIcon size="4" />
             How it works
-          </span>
+          </Badge>
           <h2 className="mt-4 text-4xl sm:text-5xl lg:text-6xl font-black text-foreground tracking-tighter  leading-tight">
-            Four simple steps. Done in seconds.
+            Four simple steps. Done in <span className="text-primary">seconds.</span>
           </h2>
         </MotionDiv>
 

@@ -1,9 +1,11 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import type { ReactNode } from "react";
+import { ArrowRight, CheckCircle2, TrendingUp,SquareChartGantt } from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ArrowRight, CheckCircle2, TrendingUp } from "lucide-react";
 import { MotionDiv } from "@/lib/motion";
 import RotatingText from "./animated/RotatingText";
 
@@ -28,87 +30,86 @@ export interface HeroSectionProps {
   stats?: Array<{
     value: string;
     label: string;
-    icon?: React.ReactNode;
+    icon?: ReactNode;
   }>;
-  visualContent?: React.ReactNode;
+  visualContent?: ReactNode;
   className?: string;
 }
 
 export function HeroSection({
   badge,
-  title,
+
   description,
   features = [],
   primaryButton,
   secondaryButton,
-  stats = [],
+
   visualContent,
   className,
 }: HeroSectionProps) {
-  const handlePrimaryClick = () => {
-    if (primaryButton?.href) {
-      window.open(primaryButton.href, "_blank");
-    }
-    primaryButton?.onClick?.();
-  };
-
-  const handleSecondaryClick = () => {
-    if (secondaryButton?.href) {
-      window.open(secondaryButton.href, "_blank");
-    }
-    secondaryButton?.onClick?.();
-  };
-
   return (
     <section
       className={cn(
-        "py-20 md:py-32 bg-background font-dmSans relative overflow-hidden",
+        "relative overflow-hidden bg-background pt-8 pb-20 md:pt-16 md:pb-32 font-dmSans ",
         className,
       )}
     >
       {/* Background Subtle Grid */}
-      <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,var(--border)_0px_1px,transparent_1px_8px)] opacity-30 mask-[radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_110%)] pointer-events-none"></div>
-
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+      <div className="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(45deg,var(--border)_0px_1px,transparent_1px_8px)] opacity-30 [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_110%)]" />
+      
+      <div className="relative z-10 mx-auto max-w-7xl px-6">
+        <div className="grid items-center gap-16 lg:grid-cols-2 lg:gap-24">
+          
           {/* Left Column Content */}
           <div className="space-y-8 text-left">
-            {/* Badge & Title Header */}
             <MotionDiv
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4 }}
               className="space-y-6"
             >
-              {/* Monospace  Badge */}
+              <Badge
+                variant="secondary"
+                className="px-3.5 py-1 text-xs font-mono font-bold tracking-widest bg-primary/10 border border-primary/20 text-primary rounded-full mb-4 inline-flex items-center gap-1.5"
+              >
+                <SquareChartGantt className="size-3.5" /> 
+                MERGE & MANAGE
+              </Badge>
+              {/* Badge */}
               {badge && (
                 <Badge
+                  asChild={Boolean(badge.href)}
                   variant="secondary"
-                  className="w-fit px-4 py-1.5 text-[10px] font-mono font-bold  tracking-[0.25em] bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 transition-all rounded-full cursor-pointer"
-                  onClick={() =>
-                    badge.href && window.open(badge.href, "_blank")
-                  }
+                  className="w-fit rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-[10px] font-mono font-bold tracking-[0.25em] text-primary transition-all hover:bg-primary/20"
                 >
-                  {badge.text}
+                  {badge.href ? (
+                    <a href={badge.href}>{badge.text}</a>
+                  ) : (
+                    <span>{badge.text}</span>
+                  )}
                 </Badge>
               )}
 
-              {/* Bold Capitalized Title with Dynamic Rotating Text */}
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tighter text-foreground leading-[0.95] flex flex-col gap-2">
+              {/* Title */}
+              <h1 className="flex flex-col gap-2 text-5xl font-black leading-[0.95] tracking-tighter text-foreground sm:text-6xl lg:text-7xl">
                 <span className="block">
                   <RotatingText
                     texts={["Convert", "Merge", "Split"]}
-                    mainClassName="text-primary overflow-hidden pb-1"
+                    mainClassName="overflow-hidden pb-1 text-primary"
                     staggerDuration={0.025}
                     splitBy="characters"
-                    transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                    transition={{
+                      type: "spring",
+                      damping: 25,
+                      stiffness: 300,
+                    }}
                     rotationInterval={2500}
                   />
                 </span>
                 <span className="block text-foreground">srt files</span>
               </h1>
 
-              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-xl">
+              <p className="max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
                 {description}
               </p>
             </MotionDiv>
@@ -123,8 +124,8 @@ export function HeroSection({
               >
                 {features.map((feature, index) => (
                   <div key={index} className="flex items-center gap-3">
-                    <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" />
-                    <span className="text-sm font-semibold tracking-wide text-foreground  tracking-wider font-mono text-[11px]">
+                    <CheckCircle2 className="h-5 w-5 flex-shrink-0 text-primary" />
+                    <span className="text-[11px] font-semibold tracking-wider text-foreground">
                       {feature}
                     </span>
                   </div>
@@ -137,27 +138,33 @@ export function HeroSection({
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.25 }}
-              className="flex flex-col sm:flex-row gap-4"
+              className="flex flex-col gap-4 sm:flex-row"
             >
-              {primaryButton && (
-                <Button
-                  size="lg"
-                  onClick={handlePrimaryClick}
-                  className="px-8 py-6 rounded-full text-xs font-bold tracking-wider bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300 shadow-sm"
-                >
-                  {primaryButton.text}
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              )}
+            {primaryButton && (
+ <Button
+ size="lg"
+ onClick={primaryButton.onClick}
+ className="group inline-flex items-center justify-center rounded-full bg-primary px-8 py-6 text-xs font-bold tracking-wider text-primary-foreground shadow-sm transition-all duration-300 hover:scale-[1.03] hover:bg-primary/90 hover:shadow-lg active:scale-[0.98]"
+>
+ {primaryButton.text}
+ <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+</Button>
+)}
+
 
               {secondaryButton && (
                 <Button
+                  asChild
                   variant="outline"
                   size="lg"
-                  onClick={handleSecondaryClick}
-                  className="px-8 py-6 rounded-full text-xs font-bold tracking-wider border-border hover:bg-muted text-foreground transition-all duration-300"
+                  className="rounded-full border-border px-8 py-6 text-xs font-bold tracking-wider text-foreground transition-all duration-300 hover:bg-muted"
                 >
-                  {secondaryButton.text}
+                  <a
+                    href={secondaryButton.href ?? "#how-it-works"}
+                    onClick={secondaryButton.onClick}
+                  >
+                    {secondaryButton.text}
+                  </a>
                 </Button>
               )}
             </MotionDiv>
@@ -170,23 +177,21 @@ export function HeroSection({
             transition={{ duration: 0.5, delay: 0.1 }}
             className="relative w-full"
           >
-            {visualContent ? (
-              visualContent
-            ) : (
-              <div className="relative bg-gradient-to-br from-muted/50 to-muted/80 rounded-3xl border border-border aspect-[4/3] flex items-center justify-center overflow-hidden shadow-2xl">
+            {visualContent ?? (
+              <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-muted/50 to-muted/80 shadow-2xl">
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5" />
 
-                <div className="relative text-center p-8 z-10">
-                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-primary/20">
-                    <TrendingUp className="h-6 w-6 text-primary animate-pulse" />
+                <div className="relative z-10 p-8 text-center">
+                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-primary/20 bg-primary/10">
+                    <TrendingUp className="h-6 w-6 animate-pulse text-primary" />
                   </div>
                   <p className="text-xs font-mono font-bold tracking-wider text-muted-foreground">
                     System Visual Preview
                   </p>
                 </div>
 
-                <div className="absolute top-6 right-6 w-4 h-4 bg-primary/30 rounded-full blur-xs animate-ping" />
-                <div className="absolute bottom-8 left-8 w-3 h-3 bg-indigo-500/20 rounded-full blur-xs" />
+                <div className="absolute right-6 top-6 h-4 w-4 animate-ping rounded-full bg-primary/30 blur-sm" />
+                <div className="absolute bottom-8 left-8 h-3 w-3 rounded-full bg-indigo-500/20 blur-sm" />
               </div>
             )}
           </MotionDiv>

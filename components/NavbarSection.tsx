@@ -17,7 +17,7 @@ import { ThemeToggle } from "./theme/ThemeToggle";
 import { cn } from "@/lib/utils";
 import { TextAlignJustify } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-
+import  Link  from "next/link";
 import { GithubIcon } from "@/components/animated/GithubAnimatedIcon";
 export type NavigationSection = {
   title: string;
@@ -27,19 +27,19 @@ export type NavigationSection = {
 const navigationData: NavigationSection[] = [
   {
     title: "About",
-    href: "#",
+    href: "/about",
   },
   {
     title: "Usage Guide",
-    href: "#",
+    href: "#usage-guide",
   },
   {
     title: "Features",
-    href: "#",
+    href: "#features",
   },
   {
-    title: "Tools",
-    href: "#",
+    title: "Preview",
+    href: "#preview",
   },
 ];
 
@@ -103,12 +103,12 @@ const Navbar = () => {
           )}
         >
           {/* Logo Brand Link */}
-          <a
-            href="#"
+          <Link
+            href="/"
             className="text-lg font-black tracking-tighter text-foreground hover:text-primary  transition-colors pl-4"
           >
             mergeit
-          </a>
+          </Link>
 
           {/* Navigation Menu */}
           <div>
@@ -150,12 +150,12 @@ const Navbar = () => {
                 >
                   {navigationData.map((item) => (
                     <DropdownMenuItem key={item.title} className="rounded-xl">
-                      <a
+                      <Link
                         href={item.href}
                         className="w-full cursor-pointer text-sm font-medium hover:text-primary transition-colors"
                       >
                         {item.title}
-                      </a>
+                      </Link>
                     </DropdownMenuItem>
                   ))}
                 </DropdownMenuContent>
