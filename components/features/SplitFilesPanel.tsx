@@ -1,51 +1,54 @@
-"use client"
+"use client";
 
-import { useState } from 'react'
-import { SplitSquareHorizontal, Download } from 'lucide-react'
+import { useState } from "react";
+import { SplitSquareHorizontal, Download } from "lucide-react";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/select";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 const SplitMethods = [
   { label: "By time duration", value: "By time duration" },
   { label: "By number of lines", value: "By number of lines" },
   { label: "By number of files", value: "By number of files" },
-]
+];
 
 interface SplitFilesProps {
-  files?: File[]
+  files?: File[];
 }
 
 export default function SplitFilesPanel({ files = [] }: SplitFilesProps) {
-  const [isSplit, setIsSplit] = useState(false)
-  const fileCount = files.length
-  const totalSizeKB = (files.reduce((acc, file) => acc + file.size, 0) / 1024).toFixed(2)
+  const [isSplit, setIsSplit] = useState(false);
+  const fileCount = files.length;
+  const totalSizeKB = (
+    files.reduce((acc, file) => acc + file.size, 0) / 1024
+  ).toFixed(2);
 
   const handleSplitClick = () => {
-    setIsSplit(true)
-  }
+    setIsSplit(true);
+  };
 
-  const baseFileName = files[0]?.name 
-    ? files[0].name.substring(0, files[0].name.lastIndexOf('.')) || files[0].name
-    : 'subtitle_file'
+  const baseFileName = files[0]?.name
+    ? files[0].name.substring(0, files[0].name.lastIndexOf(".")) ||
+      files[0].name
+    : "subtitle_file";
 
   return (
     <div className="space-y-6 w-full">
-      <div className="flex justify-between items-center px-2 text-xs font-mono text-muted-foreground uppercase tracking-wider">
+      <div className="flex justify-between items-center px-2 text-xs font-mono text-muted-foreground  tracking-wider">
         <span>Files: {fileCount}</span>
         <span>Total Size: {totalSizeKB} KB</span>
       </div>
 
       <Card className="rounded-3xl shadow-sm border border-border">
         <CardHeader className="p-6 sm:p-8 pb-4 sm:pb-4">
-          <CardTitle className="text-sm font-bold uppercase tracking-wider text-foreground">
+          <CardTitle className="text-sm font-bold  tracking-wider text-foreground">
             Split Configuration
           </CardTitle>
         </CardHeader>
@@ -53,17 +56,21 @@ export default function SplitFilesPanel({ files = [] }: SplitFilesProps) {
         <CardContent className="p-6 sm:p-8 pt-0 sm:pt-0 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2 text-left">
-              <label className="h-4 text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-muted-foreground block">
+              <label className="h-4 text-[10px] font-mono font-bold  tracking-[0.25em] text-muted-foreground block">
                 Split Method
               </label>
-              
+
               <Select defaultValue="By time duration">
                 <SelectTrigger className="h-12 min-h-12 w-full px-4 py-0 rounded-xl border border-border bg-background">
                   <SelectValue placeholder="Select a split method" />
                 </SelectTrigger>
                 <SelectContent className="rounded-md">
                   {SplitMethods.map((method) => (
-                    <SelectItem key={method.value} value={method.value} className="rounded-sm">
+                    <SelectItem
+                      key={method.value}
+                      value={method.value}
+                      className="rounded-sm"
+                    >
                       {method.label}
                     </SelectItem>
                   ))}
@@ -72,7 +79,7 @@ export default function SplitFilesPanel({ files = [] }: SplitFilesProps) {
             </div>
 
             <div className="space-y-2 text-left">
-              <label className="h-4 text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-muted-foreground block">
+              <label className="h-4 text-[10px] font-mono font-bold  tracking-[0.25em] text-muted-foreground block">
                 Split into this many files
               </label>
               <Input
@@ -88,7 +95,7 @@ export default function SplitFilesPanel({ files = [] }: SplitFilesProps) {
               type="button"
               onClick={handleSplitClick}
               disabled={fileCount === 0}
-              className="flex items-center justify-center gap-2 px-8 h-12 bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-bold uppercase tracking-widest rounded-xl transition-all duration-300 shadow-md shadow-primary/20 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center justify-center gap-2 px-8 h-12 bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-bold  tracking-widest rounded-xl transition-all duration-300 shadow-md shadow-primary/20 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <SplitSquareHorizontal className="size-4" />
               Split Files
@@ -109,23 +116,31 @@ export default function SplitFilesPanel({ files = [] }: SplitFilesProps) {
 
           <CardContent className="p-6 sm:p-8 pt-0 sm:pt-0 space-y-6 relative z-10">
             <div className="space-y-2.5 text-sm text-foreground font-medium">
-              <div className="flex flex-col sm:flex-row sm:gap-4 text-xs font-mono text-muted-foreground uppercase pb-1 border-b border-border/40">
+              <div className="flex flex-col sm:flex-row sm:gap-4 text-xs font-mono text-muted-foreground  pb-1 border-b border-border/40">
                 <span>Output Files (2 generated)</span>
               </div>
               <div className="flex items-center justify-between p-3 bg-background/80 border border-border/60 rounded-xl">
-                <span className="truncate font-medium">{baseFileName}_part1.srt</span>
-                <span className="text-xs font-mono text-muted-foreground shrink-0">42.97 KB</span>
+                <span className="truncate font-medium">
+                  {baseFileName}_part1.srt
+                </span>
+                <span className="text-xs font-mono text-muted-foreground shrink-0">
+                  42.97 KB
+                </span>
               </div>
               <div className="flex items-center justify-between p-3 bg-background/80 border border-border/60 rounded-xl">
-                <span className="truncate font-medium">{baseFileName}_part2.srt</span>
-                <span className="text-xs font-mono text-muted-foreground shrink-0">42.97 KB</span>
+                <span className="truncate font-medium">
+                  {baseFileName}_part2.srt
+                </span>
+                <span className="text-xs font-mono text-muted-foreground shrink-0">
+                  42.97 KB
+                </span>
               </div>
             </div>
 
             <div className="pt-2 flex justify-center">
               <Button
                 type="button"
-                className="flex items-center justify-center gap-2 px-8 h-12 bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-bold uppercase tracking-widest rounded-xl transition-all duration-300 shadow-md shadow-primary/20 active:scale-95"
+                className="flex items-center justify-center gap-2 px-8 h-12 bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-bold  tracking-widest rounded-xl transition-all duration-300 shadow-md shadow-primary/20 active:scale-95"
               >
                 <Download className="size-4" />
                 Download Split Files (.ZIP)
@@ -135,5 +150,5 @@ export default function SplitFilesPanel({ files = [] }: SplitFilesProps) {
         </Card>
       )}
     </div>
-  )
+  );
 }

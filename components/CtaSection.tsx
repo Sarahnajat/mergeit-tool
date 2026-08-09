@@ -1,23 +1,23 @@
-'use client'
+"use client";
 
-import React, { useRef } from 'react'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { ArrowRight, Radio, FileText } from 'lucide-react'
-import { MotionDiv } from '@/lib/motion'
+import React, { useRef } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { ArrowRight, Radio, FileText } from "lucide-react";
+import { MotionDiv } from "@/lib/motion";
 
 export function CtaSection() {
-  const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const onChooseFile = () => {
-    fileInputRef.current?.click()
-  }
+    fileInputRef.current?.click();
+  };
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    console.log('Selected file:', file.name)
-  }
+    const file = e.target.files?.[0];
+    if (!file) return;
+    console.log("Selected file:", file.name);
+  };
 
   return (
     <section
@@ -39,7 +39,7 @@ export function CtaSection() {
           >
             <Badge
               variant="secondary"
-              className="inline-flex items-center gap-2 px-4 py-1.5 text-[10px] font-mono font-bold uppercase tracking-[0.25em] bg-primary/10 border border-primary/20 text-primary rounded-full mb-4"
+              className="inline-flex items-center gap-2 px-4 py-1.5 text-[10px] font-mono font-bold  tracking-[0.25em] bg-primary/10 border border-primary/20 text-primary rounded-full mb-4"
             >
               <Radio className="h-3.5 w-3.5" aria-hidden="true" />
               100% Free, No Sign-up
@@ -47,9 +47,10 @@ export function CtaSection() {
 
             <h2
               id="cta-heading"
-              className="mb-4 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-foreground uppercase leading-tight max-w-3xl"
+              className="mb-4 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-foreground  leading-tight max-w-3xl"
             >
-              Stop wrestling with <span className="text-primary">subtitle</span> files
+              Stop wrestling with <span className="text-primary">subtitle</span>{" "}
+              files
             </h2>
           </MotionDiv>
 
@@ -60,7 +61,8 @@ export function CtaSection() {
             className="px-4"
           >
             <p className="text-muted-foreground mx-auto mb-8 max-w-2xl text-sm sm:text-base md:text-lg font-medium leading-relaxed">
-              Split, merge, or convert SRT files in seconds. Nothing leaves your browser.
+              Split, merge, or convert SRT files in seconds. Nothing leaves your
+              browser.
             </p>
           </MotionDiv>
 
@@ -92,19 +94,21 @@ export function CtaSection() {
             <Button
               variant="outline"
               size="lg"
-            
               className="px-6 py-3 rounded-full text-xs sm:text-sm font-bold tracking-wider border-border hover:bg-muted text-foreground transition-colors duration-200"
             >
               <a href="#how-it-works" aria-label="See how it works">
                 or See how it works
-                <ArrowRight className="ml-2 h-4 w-4 inline" aria-hidden="true" />
+                <ArrowRight
+                  className="ml-2 h-4 w-4 inline"
+                  aria-hidden="true"
+                />
               </a>
             </Button>
           </MotionDiv>
         </div>
       </div>
     </section>
-  )
+  );
 }
 
-export default CtaSection
+export default CtaSection;

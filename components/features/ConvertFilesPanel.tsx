@@ -43,7 +43,7 @@ export default function ConvertFilesPanel({ files = [] }: ConvertProps) {
 
   const hasFiles = files.length > 0
   const totalSizeKB = (files.reduce((total, file) => total + file.size, 0) / 1024).toFixed(2)
-  const extTag = targetFormat.toUpperCase()
+  const extTag = targetFormat.to()
 
   const handleConvertClick = async () => {
     if (!hasFiles) return
@@ -98,7 +98,7 @@ export default function ConvertFilesPanel({ files = [] }: ConvertProps) {
         {/* 1. CONVERT CONFIGURATION CARD */}
         <Card className="rounded-3xl shadow-sm border border-border flex flex-col justify-between">
           <CardHeader className="p-6 sm:p-8 pb-4 sm:pb-4">
-            <CardTitle className="text-sm font-bold uppercase tracking-wider">
+            <CardTitle className="text-sm font-bold  tracking-wider">
               Convert Configuration
             </CardTitle>
           </CardHeader>
@@ -107,7 +107,7 @@ export default function ConvertFilesPanel({ files = [] }: ConvertProps) {
             <div className="space-y-2.5">
               {files.map((file, index) => {
                 const inputExt = file.name?.includes('.')
-                  ? file.name.split('.').pop()?.toUpperCase()
+                  ? file.name.split('.').pop()?.to()
                   : 'SRT'
                 const fileSize = (file.size / 1024).toFixed(2)
 
@@ -118,7 +118,7 @@ export default function ConvertFilesPanel({ files = [] }: ConvertProps) {
                   >
                     <div className="relative flex items-center justify-center size-11 rounded-full bg-primary/10 border border-primary/20 shrink-0">
                       <FileText className="size-5 text-primary" />
-                      <span className="absolute -bottom-1 text-[8px] font-mono font-bold text-primary uppercase bg-background px-1 rounded-sm border border-primary/30 shadow-xs">
+                      <span className="absolute -bottom-1 text-[8px] font-mono font-bold text-primary  bg-background px-1 rounded-sm border border-primary/30 shadow-xs">
                         {inputExt}
                       </span>
                     </div>
@@ -230,7 +230,7 @@ export default function ConvertFilesPanel({ files = [] }: ConvertProps) {
                       <div className="flex items-center gap-3.5 min-w-0">
                         <div className="relative flex items-center justify-center size-11 rounded-full bg-primary/10 border border-primary/20 shrink-0">
                           <FileText className="size-5 text-primary" />
-                          <span className="absolute -bottom-1 text-[8px] font-mono font-bold text-primary uppercase bg-background px-1 rounded-sm border border-primary/30 shadow-xs">
+                          <span className="absolute -bottom-1 text-[8px] font-mono font-bold text-primary  bg-background px-1 rounded-sm border border-primary/30 shadow-xs">
                             {extTag}
                           </span>
                         </div>

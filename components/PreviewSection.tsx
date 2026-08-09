@@ -42,15 +42,16 @@ export default function PreviewSection() {
           transition={{ duration: 0.4 }}
           className="flex flex-col items-center text-center gap-3 mb-8 max-w-xl px-2"
         >
-          <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-[0.3em]">
-          Discover What MergeIt Can Do
+          <span className="text-[10px] font-mono text-muted-foreground  tracking-[0.3em]">
+            Discover What MergeIt Can Do
           </span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-foreground tracking-tight uppercase leading-tight">
-  Split, <span className="text-primary">merge</span>, or convert.
-</h2>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-foreground tracking-tight  leading-tight">
+            Split, <span className="text-primary">merge</span>, or convert.
+          </h2>
 
           <p className="text-muted-foreground text-sm sm:text-base max-w-lg font-medium leading-relaxed">
-            Pick a tool below. merge combines multiple SRT files into one, keeping timing intact so nothing overlaps or drifts.
+            Pick a tool below. merge combines multiple SRT files into one,
+            keeping timing intact so nothing overlaps or drifts.
           </p>
         </MotionDiv>
 
@@ -89,14 +90,14 @@ export default function PreviewSection() {
 function SplitPanel() {
   return (
     <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center px-2 text-xs font-mono text-muted-foreground uppercase tracking-wider gap-2">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center px-2 text-xs font-mono text-muted-foreground  tracking-wider gap-2">
         <span>Files: 2</span>
         <span>Total Size: 85.94 KB</span>
       </div>
 
       <Card className="rounded-2xl shadow-sm border-border">
         <CardHeader className="px-4 py-4">
-          <CardTitle className="text-sm font-bold uppercase tracking-wider text-foreground">
+          <CardTitle className="text-sm font-bold  tracking-wider text-foreground">
             Split Configuration
           </CardTitle>
         </CardHeader>
@@ -104,7 +105,7 @@ function SplitPanel() {
         <CardContent className="px-4 py-6 space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-[10px] font-mono font-bold text-muted-foreground uppercase tracking-widest">
+              <label className="text-[10px] font-mono font-bold text-muted-foreground  tracking-widest">
                 Split Method
               </label>
               <div className="flex items-center justify-between border border-border bg-card rounded-xl px-4 py-3 text-sm text-foreground">
@@ -114,7 +115,7 @@ function SplitPanel() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-mono font-bold text-muted-foreground uppercase tracking-widest">
+              <label className="text-[10px] font-mono font-bold text-muted-foreground  tracking-widest">
                 Duration per File (minutes)
               </label>
               <input
@@ -145,14 +146,14 @@ function SplitPanel() {
 function MergePanel() {
   return (
     <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center px-2 text-xs font-mono text-muted-foreground uppercase tracking-wider gap-2">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center px-2 text-xs font-mono text-muted-foreground  tracking-wider gap-2">
         <span>Files: 2</span>
         <span>Total Size: 104.35 KB</span>
       </div>
 
       <Card className="rounded-2xl shadow-sm border-border">
         <CardHeader className="px-4 py-4">
-          <CardTitle className="text-sm font-bold uppercase tracking-wider text-foreground">
+          <CardTitle className="text-sm font-bold  tracking-wider text-foreground">
             Merge Configuration
           </CardTitle>
         </CardHeader>
@@ -187,14 +188,14 @@ function MergePanel() {
 function ConvertPanel() {
   return (
     <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center px-2 text-xs font-mono text-muted-foreground uppercase tracking-wider gap-2">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center px-2 text-xs font-mono text-muted-foreground  tracking-wider gap-2">
         <span>Files: 1</span>
         <span>Total Size: 48.20 KB</span>
       </div>
 
       <Card className="rounded-2xl shadow-sm border-border">
         <CardHeader className="px-4 py-4">
-          <CardTitle className="text-sm font-bold uppercase tracking-wider">
+          <CardTitle className="text-sm font-bold  tracking-wider">
             Convert Configuration
           </CardTitle>
         </CardHeader>
@@ -202,7 +203,7 @@ function ConvertPanel() {
         <CardContent className="px-4 py-6 space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-[10px] font-mono font-bold text-muted-foreground uppercase tracking-widest">
+              <label className="text-[10px] font-mono font-bold text-muted-foreground  tracking-widest">
                 Target Format
               </label>
               <Select defaultValue="ass">
@@ -210,14 +211,16 @@ function ConvertPanel() {
                   <SelectValue placeholder="Select format" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="ass">Advanced SubStation (.ass)</SelectItem>
+                  <SelectItem value="ass">
+                    Advanced SubStation (.ass)
+                  </SelectItem>
                   <SelectItem value="srt">SubRip (.srt)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-mono font-bold text-muted-foreground uppercase tracking-widest">
+              <label className="text-[10px] font-mono font-bold text-muted-foreground  tracking-widest">
                 Preserve Styling
               </label>
               <Select defaultValue="yes">

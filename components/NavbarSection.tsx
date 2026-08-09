@@ -1,14 +1,24 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from "@/components/ui/navigation-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+} from "@/components/ui/navigation-menu";
 import { ThemeToggle } from "./theme/ThemeToggle";
 import { cn } from "@/lib/utils";
 import { TextAlignJustify } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { IconBrandGithub } from "@tabler/icons-react";
 
+import { GithubIcon } from "@/components/animated/GithubAnimatedIcon";
 export type NavigationSection = {
   title: string;
   href: string;
@@ -34,12 +44,15 @@ const navigationData: NavigationSection[] = [
 ];
 
 const CollaborateButton = ({ className }: { className?: string }) => (
-  <Button className={cn("relative text-sm font-semibold rounded-full h-10 p-1 ps-5 pe-12 group transition-all duration-500 hover:ps-12 hover:pe-5 w-fit overflow-hidden bg-primary hover:bg-primary/90 text-primary-foreground", className)}>
-    <span className="relative z-10 transition-all duration-500 hover:cursor-pointer">
-      Star us on Github
-    </span>
-    <div className="absolute right-1 w-8 h-8 bg-primary-foreground text-primary rounded-full flex items-center justify-center transition-all duration-500 group-hover:right-[calc(100%-36px)] group-hover:rotate-45 shadow-sm">
-      <IconBrandGithub size={16} />
+  <Button
+    className={cn(
+      "relative text-sm font-semibold rounded-full h-10 pl-5 pr-1.5 group transition-all duration-300 w-fit overflow-hidden bg-primary hover:bg-primary/95 text-primary-foreground shadow-sm hover:shadow-md flex items-center gap-3 cursor-pointer",
+      className,
+    )}
+  >
+    <span className="relative z-10">Star us on Github</span>
+    <div className="w-7 h-7 bg-primary-foreground text-primary rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12 shadow-xs">
+      <GithubIcon />
     </div>
   </Button>
 );
@@ -47,7 +60,7 @@ const CollaborateButton = ({ className }: { className?: string }) => (
 const Navbar = () => {
   const [sticky, setSticky] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  
+
   const handleScroll = useCallback(() => {
     setSticky(window.scrollY >= 50);
   }, []);
@@ -74,13 +87,13 @@ const Navbar = () => {
             "w-full flex items-center h-fit justify-between gap-3.5 lg:gap-6 transition-all duration-500",
             sticky
               ? "p-2.5 bg-background/80 backdrop-blur-lg border border-border shadow-lg rounded-full"
-              : "bg-transparent border-transparent"
+              : "bg-transparent border-transparent",
           )}
         >
           {/* Logo Brand Link */}
-          <a 
-            href="#" 
-            className="text-lg font-black tracking-tighter text-foreground hover:text-primary uppercase transition-colors pl-4"
+          <a
+            href="#"
+            className="text-lg font-black tracking-tighter text-foreground hover:text-primary  transition-colors pl-4"
           >
             mergeit
           </a>
@@ -109,7 +122,7 @@ const Navbar = () => {
           {/* CTA Actions */}
           <div className="flex items-center gap-3">
             <CollaborateButton className="hidden lg:flex" />
-            
+
             {/* Mobile Dropdown Trigger */}
             <div className="lg:hidden flex items-center gap-2">
               <ThemeToggle />
@@ -125,7 +138,10 @@ const Navbar = () => {
                 >
                   {navigationData.map((item) => (
                     <DropdownMenuItem key={item.title} className="rounded-xl">
-                      <a href={item.href} className="w-full cursor-pointer text-sm font-medium hover:text-primary transition-colors">
+                      <a
+                        href={item.href}
+                        className="w-full cursor-pointer text-sm font-medium hover:text-primary transition-colors"
+                      >
                         {item.title}
                       </a>
                     </DropdownMenuItem>

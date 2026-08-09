@@ -1,32 +1,42 @@
-'use client'
+"use client";
 
-import {Zap, SplitSquareHorizontal, Merge, LockKeyhole, Sparkles } from 'lucide-react'
-import { MotionDiv } from "@/lib/motion"
-import { Badge } from '@/components/ui/badge'
+import {
+  Zap,
+  SplitSquareHorizontal,
+  Merge,
+  LockKeyhole,
+  Sparkles,
+} from "lucide-react";
+import { MotionDiv } from "@/lib/motion";
+import { Badge } from "@/components/ui/badge";
 import NavbarSection from "@/components/NavbarSection";
-import { FooterSection } from "@/components/FooterSection"; 
+import { FooterSection } from "@/components/FooterSection";
 const features = [
   {
     icon: SplitSquareHorizontal,
-    title: 'Precision Splitting',
-    description: 'Break down large subtitle files by exact time duration, specific line counts, or evenly into multiple files.',
+    title: "Precision Splitting",
+    description:
+      "Break down large subtitle files by exact time duration, specific line counts, or evenly into multiple files.",
   },
   {
     icon: Merge,
-    title: 'Seamless Merging',
-    description: 'Combine multiple subtitle tracks into one flawlessly timed file without losing formatting or sync.',
+    title: "Seamless Merging",
+    description:
+      "Combine multiple subtitle tracks into one flawlessly timed file without losing formatting or sync.",
   },
   {
     icon: LockKeyhole,
-    title: '100% Private',
-    description: 'Everything happens locally right inside your browser. Your files never touch our servers.',
+    title: "100% Private",
+    description:
+      "Everything happens locally right inside your browser. Your files never touch our servers.",
   },
   {
     icon: Zap,
-    title: 'Free & Instant',
-    description: 'No registration walls, no hidden fees, and no file size limits. Just drop your files and get to work.',
+    title: "Free & Instant",
+    description:
+      "No registration walls, no hidden fees, and no file size limits. Just drop your files and get to work.",
   },
-]
+];
 
 export default function AboutPage() {
   return (
@@ -36,7 +46,6 @@ export default function AboutPage() {
       <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,var(--border)_0px_1px,transparent_1px_8px)] opacity-30 mask-[radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)] pointer-events-none"></div>
 
       <div className="max-w-5xl mx-auto space-y-24 relative z-10">
-        
         {/* HEADER SECTION */}
         <section className="text-center space-y-8 max-w-3xl mx-auto">
           <MotionDiv
@@ -44,20 +53,23 @@ export default function AboutPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
           >
-            <Badge 
-              variant="secondary" 
-              className="px-4 py-1.5 text-[10px] font-mono font-bold uppercase tracking-[0.25em] bg-primary/10 border border-primary/20 text-primary rounded-full mb-6"
+            <Badge
+              variant="secondary"
+              className="px-4 py-1.5 text-[10px] font-mono font-bold  tracking-[0.25em] bg-primary/10 border border-primary/20 text-primary rounded-full mb-6"
             >
               About Our Tools
             </Badge>
-            
-            <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-foreground uppercase leading-[0.95] mb-6">
+
+            <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-foreground  leading-[0.95] mb-6">
               Subtitle Management, <br className="hidden sm:block" />
               <span className="text-muted-foreground">Simplified.</span>
             </h1>
-            
+
             <p className="text-lg text-muted-foreground leading-relaxed">
-              We understand the headaches of working with subtitle files. That’s why we built a suite of simple, blazing-fast tools designed specifically for content creators, translators, and video editors to save time and effort.
+              We understand the headaches of working with subtitle files. That’s
+              why we built a suite of simple, blazing-fast tools designed
+              specifically for content creators, translators, and video editors
+              to save time and effort.
             </p>
           </MotionDiv>
         </section>
@@ -95,22 +107,23 @@ export default function AboutPage() {
         >
           <div className="bg-primary/5 border border-primary/20 rounded-[2.5rem] p-10 md:p-16 text-center space-y-6 relative overflow-hidden">
             <div className="absolute top-0 right-0 -mr-16 -mt-16 size-48 bg-primary/10 blur-3xl rounded-full pointer-events-none" />
-            
+
             <Sparkles className="size-8 text-primary mx-auto mb-4" />
             <h2 className="text-2xl md:text-3xl font-black text-foreground tracking-tight">
               Our Commitment
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              We are constantly refining our tools based on your feedback. Our ultimate goal is to provide the most reliable, secure, and user-friendly SRT management platform on the web.
+              We are constantly refining our tools based on your feedback. Our
+              ultimate goal is to provide the most reliable, secure, and
+              user-friendly SRT management platform on the web.
             </p>
-            <p className="text-xs font-mono font-bold text-muted-foreground uppercase tracking-widest pt-4">
+            <p className="text-xs font-mono font-bold text-muted-foreground  tracking-widest pt-4">
               Last updated: September 2025
             </p>
           </div>
         </MotionDiv>
-
       </div>
       <FooterSection />
     </main>
-  )
+  );
 }
