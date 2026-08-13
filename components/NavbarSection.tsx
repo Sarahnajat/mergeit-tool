@@ -31,15 +31,15 @@ const navigationData: NavigationSection[] = [
   },
   {
     title: "Usage Guide",
-    href: "#usage-guide",
+    href: "/#usage-guide",
   },
   {
     title: "Features",
-    href: "#features",
+    href: "/#features",
   },
   {
     title: "Preview",
-    href: "#preview",
+    href: "/#preview",
   },
 ];
 

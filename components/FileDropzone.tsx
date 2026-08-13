@@ -76,7 +76,7 @@ export function FileDropzone({
         </p>
         
         <p className="mt-1 text-muted-foreground text-sm">
-          {multiple ? "SRT format, upload one or more files." : "SRT format, single file up to 10 MB."}
+          {multiple ? "SRT or ASS format, upload one or more files." : "SRT or ASS format, single file up to 10 MB."}
         </p>
         
         <label

@@ -71,21 +71,24 @@ export default function MergeFilesPanel({ files = [], onAddFiles }: MergeProps) 
     setError(null);
     setResult(null);
 
-    const merged = await mergeSubtitles(files, outputFormat);
-    if (!merged.success || !merged.blob || !merged.filename) {
-      const message = merged.error ?? "Merging failed.";
-      setError(message);
-      showToast({ type: "error", title: "Merge failed", message });
-    } else {
-      const metadata = await getMergedMetadata(merged.blob, merged.filename, outputFormat);
-      setResult(metadata);
-      showToast({
-        type: "success",
-        title: "Merge complete",
-        message: `Successfully merged ${files.length} files into ${metadata.filename}.`,
-      });
+    try {
+      const merged = await mergeSubtitles(files, outputFormat);
+      if (!merged.success || !merged.blob || !merged.filename) {
+        const message = merged.error ?? "Merging failed.";
+        setError(message);
+        showToast({ type: "error", title: "Merge failed", message });
+      } else {
+        const metadata = await getMergedMetadata(merged.blob, merged.filename, outputFormat);
+        setResult(metadata);
+        showToast({
+          type: "success",
+          title: "Merge complete",
+          message: `Successfully merged ${files.length} files into ${metadata.filename}.`,
+        });
+      }
+    } finally {
+      setIsMerging(false);
     }
-    setIsMerging(false);
   };
 
   const handleDownload = () => {
@@ -97,7 +100,7 @@ export default function MergeFilesPanel({ files = [], onAddFiles }: MergeProps) 
     document.body.appendChild(link);
     link.click();
     link.remove();
-    URL.revokeObjectURL(url);
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
   return (
@@ -126,7 +129,9 @@ export default function MergeFilesPanel({ files = [], onAddFiles }: MergeProps) 
             {isMerging ? <Loader2 className="size-4 animate-spin" /> : <MergeIcon className="size-4" />}
             {isMerging ? "Merging..." : "Merge Files"}
           </Button>
-          {!hasEnoughFiles && <p className="text-xs text-destructive">Please select at least two files.</p>}
+          {files.length > 0 && !hasEnoughFiles && (
+            <p className="text-xs text-destructive">Please select at least two files.</p>
+          )}
           {error && <p className="flex items-center gap-1.5 text-xs text-destructive"><AlertCircle className="size-3.5" />{error}</p>}
         </div>
       </div>

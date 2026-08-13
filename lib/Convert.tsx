@@ -29,13 +29,18 @@ export function formatExtension(format: SubtitleFormat): string {
 function srtTimeToMs(value: string): number {
   const match = value.trim().match(/^(\d+):(\d{2}):(\d{2})[,\.](\d{3})$/)
   if (!match) throw new Error(`Invalid SRT timestamp: ${value}`)
-  return (((Number(match[1]) * 60 + Number(match[2])) * 60 + Number(match[3])) * 1000) + Number(match[4])
+  return ((Number(match[1]) * 3600 + Number(match[2]) * 60 + Number(match[3])) * 1000) + Number(match[4])
+}
+
+function assFractionToMs(fraction: string): number {
+  const normalized = fraction.padEnd(2, '0').slice(0, 2)
+  return Number(normalized) * 10
 }
 
 function assTimeToMs(value: string): number {
   const match = value.trim().match(/^(\d+):(\d{1,2}):(\d{1,2})[\.:](\d{1,2})$/)
   if (!match) throw new Error(`Invalid ASS timestamp: ${value}`)
-  return ((Number(match[1]) * 3600 + Number(match[2]) * 60 + Number(match[3])) * 1000) + Number(match[4]) * 10
+  return ((Number(match[1]) * 3600 + Number(match[2]) * 60 + Number(match[3])) * 1000) + assFractionToMs(match[4])
 }
 
 function pad(value: number, length = 2): string {
@@ -90,6 +95,8 @@ function convertSrtTextToAss(text: string, preserveStyling: boolean): string {
 
 function srtToAss(source: string, preserveStyling: boolean): string {
   const captions = parseSrt(source)
+  if (captions.length === 0) throw new Error('The subtitle file contains no dialogue entries.')
+
   const header = `[Script Info]\r\nScriptType: v4.00+\r\n\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\r\nStyle: Default,Arial,28,&H00FFFFFF,&H00FFFFFF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,30,30,30,0\r\n\r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\n`
   const events = captions.map((caption) => `Dialogue: 0,${msToAssTime(caption.start)},${msToAssTime(caption.end)},Default,,0,0,0,,${convertSrtTextToAss(caption.text, preserveStyling)}`)
   return `${header}${events.join('\r\n')}\r\n`
@@ -131,6 +138,8 @@ function convertAssTextToSrt(text: string, preserveStyling: boolean): string {
 function assToSrt(source: string, preserveStyling: boolean): string {
   const lines = source.replace(/^\uFEFF/, '').split(/\r?\n/)
   const eventsIndex = lines.findIndex((line) => /^\[Events\]\s*$/i.test(line.trim()))
+  if (eventsIndex < 0) throw new Error('ASS file has no [Events] section.')
+
   const formatLine = lines.find(
     (line, index) => index > eventsIndex && /^Format\s*:/i.test(line)
   )
@@ -148,6 +157,8 @@ function assToSrt(source: string, preserveStyling: boolean): string {
     const text = convertAssTextToSrt(values[textIndex], preserveStyling)
     return { start: assTimeToMs(values[startIndex]), end: assTimeToMs(values[endIndex]), text }
   }).filter((caption): caption is Caption => caption !== null)
+
+  if (captions.length === 0) throw new Error('The subtitle file contains no dialogue entries.')
 
   return captions.map((caption, index) => `${index + 1}\r\n${msToSrtTime(caption.start)} --> ${msToSrtTime(caption.end)}\r\n${caption.text}`).join('\r\n\r\n') + '\r\n'
 }

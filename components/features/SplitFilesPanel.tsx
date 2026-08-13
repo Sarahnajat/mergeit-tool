@@ -65,10 +65,14 @@ export default function SplitFilesPanel({ files = [] }: SplitFilesProps) {
     document.body.appendChild(link);
     link.click();
     link.remove();
-    URL.revokeObjectURL(url);
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
-  const downloadAll = () => parts.forEach(downloadPart);
+  const downloadAll = () => {
+    parts.forEach((part, index) => {
+      window.setTimeout(() => downloadPart(part), index * 300);
+    });
+  };
 
   return (
     <div className="space-y-6 w-full">

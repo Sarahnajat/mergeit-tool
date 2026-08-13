@@ -13,10 +13,21 @@ interface Caption {
   text: string
 }
 
-interface AssDocument {
-  captions: Caption[]
-  header: string
+interface AssCaption extends Caption {
+  dialogueValues?: string[]
 }
+
+interface AssDocument {
+  captions: AssCaption[]
+  header: string
+  formatFields: string[]
+}
+
+type ParsedDocument = AssDocument
+
+const DEFAULT_ASS_FORMAT_FIELDS = [
+  'layer', 'start', 'end', 'style', 'name', 'marginl', 'marginr', 'marginv', 'effect', 'text',
+]
 
 function getFormat(name: string): SubtitleFormat | null {
   const extension = name.split('.').pop()?.toLowerCase()
@@ -37,13 +48,18 @@ function srtTimeToMs(value: string): number {
   )
 }
 
+function assFractionToMs(fraction: string): number {
+  const normalized = fraction.padEnd(2, '0').slice(0, 2)
+  return Number(normalized) * 10
+}
+
 function assTimeToMs(value: string): number {
   const match = value.trim().match(/^(\d+):(\d{1,2}):(\d{1,2})[\.:](\d{1,2})$/)
   if (!match) throw new Error(`Invalid ASS timestamp: ${value}`)
 
   return (
     (Number(match[1]) * 3600 + Number(match[2]) * 60 + Number(match[3])) * 1000 +
-    Number(match[4]) * 10
+    assFractionToMs(match[4])
   )
 }
 
@@ -104,7 +120,66 @@ function splitAssFields(value: string, fieldCount: number): string[] | null {
   return fields
 }
 
-function parseAss(source: string): AssDocument {
+function parseAssFormatFields(header: string): string[] {
+  const lines = header.split(/\r?\n/)
+  const eventsIndex = lines.findIndex((line) => /^\[Events\]\s*$/i.test(line.trim()))
+  if (eventsIndex < 0) return DEFAULT_ASS_FORMAT_FIELDS
+
+  const formatLine = lines.find(
+    (line, index) => index > eventsIndex && /^Format\s*:/i.test(line),
+  )
+
+  return formatLine
+    ? formatLine
+        .slice(formatLine.indexOf(':') + 1)
+        .split(',')
+        .map((field) => field.trim().toLowerCase())
+    : DEFAULT_ASS_FORMAT_FIELDS
+}
+
+function convertSrtTextToAss(text: string): string {
+  return text
+    .replace(/\r?\n/g, '\\N')
+    .replace(/<i>/gi, '{\\i1}')
+    .replace(/<\/i>/gi, '{\\i0}')
+    .replace(/<b>/gi, '{\\b1}')
+    .replace(/<\/b>/gi, '{\\b0}')
+    .replace(/<u>/gi, '{\\u1}')
+    .replace(/<\/u>/gi, '{\\u0}')
+}
+
+function convertAssTextToSrt(text: string): string {
+  return text
+    .replace(/\\N/gi, '\n')
+    .replace(/\\n/gi, '\n')
+    .replace(/\{\\i1\}/gi, '<i>')
+    .replace(/\{\\i0\}/gi, '</i>')
+    .replace(/\{\\b1\}/gi, '<b>')
+    .replace(/\{\\b0\}/gi, '</b>')
+    .replace(/\{\\u1\}/gi, '<u>')
+    .replace(/\{\\u0\}/gi, '</u>')
+    .replace(/\{[^}]*\}/g, '')
+    .trim()
+}
+
+function normalizeCaptionText(
+  text: string,
+  sourceFormat: SubtitleFormat,
+  targetFormat: SubtitleFormat,
+): string {
+  if (sourceFormat === targetFormat) return text
+  return targetFormat === 'ass' ? convertSrtTextToAss(text) : convertAssTextToSrt(text)
+}
+
+function parseSrtDocument(source: string): ParsedDocument {
+  return {
+    captions: parseSrt(source),
+    header: '',
+    formatFields: DEFAULT_ASS_FORMAT_FIELDS,
+  }
+}
+
+function parseAss(source: string): ParsedDocument {
   const lines = source.replace(/^\uFEFF/, '').split(/\r?\n/)
   const eventsIndex = lines.findIndex((line) => /^\[Events\]\s*$/i.test(line.trim()))
 
@@ -121,7 +196,7 @@ function parseAss(source: string): AssDocument {
         .slice(formatLine.indexOf(':') + 1)
         .split(',')
         .map((field) => field.trim().toLowerCase())
-    : ['layer', 'start', 'end', 'style', 'name', 'marginl', 'marginr', 'marginv', 'effect', 'text']
+    : DEFAULT_ASS_FORMAT_FIELDS
 
   const startIndex = fields.indexOf('start')
   const endIndex = fields.indexOf('end')
@@ -131,23 +206,23 @@ function parseAss(source: string): AssDocument {
     throw new Error('ASS Events format must contain Start, End, and Text.')
   }
 
-  const captions = lines
-    .filter((line) => /^Dialogue\s*:/i.test(line))
-    .map((line) => {
-      const values = splitAssFields(
-        line.slice(line.indexOf(':') + 1).trim(),
-        fields.length,
-      )
+  const captions: AssCaption[] = []
 
-      if (!values) return null
+  for (const line of lines.filter((entry) => /^Dialogue\s*:/i.test(entry))) {
+    const values = splitAssFields(
+      line.slice(line.indexOf(':') + 1).trim(),
+      fields.length,
+    )
 
-      return {
-        start: assTimeToMs(values[startIndex]),
-        end: assTimeToMs(values[endIndex]),
-        text: values[textIndex],
-      }
+    if (!values) continue
+
+    captions.push({
+      start: assTimeToMs(values[startIndex]),
+      end: assTimeToMs(values[endIndex]),
+      text: values[textIndex],
+      dialogueValues: values,
     })
-    .filter((caption): caption is Caption => caption !== null)
+  }
 
   const firstDialogueIndex = lines.findIndex((line) => /^Dialogue\s*:/i.test(line))
   const header = lines
@@ -155,7 +230,7 @@ function parseAss(source: string): AssDocument {
     .join('\r\n')
     .replace(/\r?\n*$/, '')
 
-  return { captions, header }
+  return { captions, header, formatFields: fields }
 }
 
 function defaultAssHeader(): string {
@@ -181,11 +256,22 @@ function buildSrt(captions: Caption[]): string {
   )
 }
 
-function buildAss(header: string, captions: Caption[]): string {
-  const events = captions.map(
-    (caption) =>
-      `Dialogue: 0,${msToAssTime(caption.start)},${msToAssTime(caption.end)},Default,,0,0,0,,${caption.text}`,
-  )
+function buildAss(header: string, formatFields: string[], captions: AssCaption[]): string {
+  const startIndex = formatFields.indexOf('start')
+  const endIndex = formatFields.indexOf('end')
+  const textIndex = formatFields.indexOf('text')
+
+  const events = captions.map((caption) => {
+    if (caption.dialogueValues && startIndex >= 0 && endIndex >= 0) {
+      const values = [...caption.dialogueValues]
+      values[startIndex] = msToAssTime(caption.start)
+      values[endIndex] = msToAssTime(caption.end)
+      if (textIndex >= 0) values[textIndex] = caption.text
+      return `Dialogue: ${values.join(',')}`
+    }
+
+    return `Dialogue: 0,${msToAssTime(caption.start)},${msToAssTime(caption.end)},Default,,0,0,0,,${caption.text}`
+  })
 
   return `${header}\r\n${events.join('\r\n')}\r\n`
 }
@@ -213,23 +299,28 @@ export async function mergeSubtitles(
     const targetFormat = outputFormat ?? inputFormats[0]!
     const sources = await Promise.all(files.map((file) => file.text()))
 
-    const documents = sources.map((source, index) => {
+    const documents: ParsedDocument[] = sources.map((source, index) => {
       const format = inputFormats[index]!
 
       return format === 'ass'
         ? parseAss(source)
-        : { captions: parseSrt(source), header: '' }
+        : parseSrtDocument(source)
     })
 
-    const allCaptions: Caption[] = []
+    const allCaptions: AssCaption[] = []
     let offset = 0
 
-    for (const document of documents) {
+    for (const [documentIndex, document] of documents.entries()) {
+      const sourceFormat = inputFormats[documentIndex]!
+
       for (const caption of document.captions) {
         allCaptions.push({
           start: caption.start + offset,
           end: caption.end + offset,
-          text: caption.text,
+          text: normalizeCaptionText(caption.text, sourceFormat, targetFormat),
+          dialogueValues: sourceFormat === 'ass' && targetFormat === 'ass'
+            ? caption.dialogueValues
+            : undefined,
         })
       }
 
@@ -245,12 +336,13 @@ export async function mergeSubtitles(
       return { success: false, error: 'The selected files contain no subtitle entries.' }
     }
 
-    const assHeader =
-      documents.find((document) => document.header)?.header ?? defaultAssHeader()
+    const assSource = documents.find((document) => document.header)
+    const assHeader = assSource?.header ?? defaultAssHeader()
+    const assFormatFields = assSource?.formatFields ?? DEFAULT_ASS_FORMAT_FIELDS
 
     const content =
       targetFormat === 'ass'
-        ? buildAss(assHeader, allCaptions)
+        ? buildAss(assHeader, assFormatFields, allCaptions)
         : buildSrt(allCaptions)
 
     const blob = new Blob([content], {

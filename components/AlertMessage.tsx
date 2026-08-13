@@ -34,6 +34,13 @@ interface ToastContextValue {
 
 const ToastContext = createContext<ToastContextValue | null>(null);
 
+function createToastId(): string {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+}
+
 const toastStyles: Record<ToastType, string> = {
   success: "border-primary/25 bg-primary/5 text-foreground shadow-primary/10",
   error: "border-destructive/25 bg-destructive/5 text-foreground shadow-destructive/10",
@@ -127,7 +134,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const showToast = useCallback((toast: ToastInput) => {
-    const id = crypto.randomUUID();
+    const id = createToastId();
     setToasts((current) => [...current.slice(-2), { ...toast, id }]);
   }, []);
 

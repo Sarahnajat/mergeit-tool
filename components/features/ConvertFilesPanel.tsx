@@ -29,7 +29,13 @@ function downloadBlob(blob: Blob, filename: string) {
   document.body.appendChild(link);
   link.click();
   link.remove();
-  URL.revokeObjectURL(url);
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function downloadBlobsStaggered(items: { blob: Blob; filename: string }[], delayMs = 300) {
+  items.forEach((item, index) => {
+    window.setTimeout(() => downloadBlob(item.blob, item.filename), index * delayMs);
+  });
 }
 
 function fileExtensionLabel(name: string): string {
@@ -60,7 +66,9 @@ export default function ConvertFilesPanel({ files = [] }: ConvertProps) {
       : unsupportedFiles.length > 0
         ? "Only .srt and .ass files are supported."
         : sameFormatFiles.length > 0
-          ? `${sameFormatFiles.map((file) => file.name).join(", ")} is already ${formatExtension(targetFormat)}. Choose the other format.`
+          ? sameFormatFiles.length === 1
+            ? `${sameFormatFiles[0].name} is already ${formatExtension(targetFormat)}. Choose the other format.`
+            : `${sameFormatFiles.map((file) => file.name).join(", ")} are already ${formatExtension(targetFormat)}. Choose the other format.`
           : null);
 
   const handleConvertClick = async () => {
@@ -119,11 +127,12 @@ export default function ConvertFilesPanel({ files = [] }: ConvertProps) {
   };
 
   const handleDownload = () => {
-    results.forEach((result) => {
-      if (result.success && result.blob && result.filename) {
-        downloadBlob(result.blob, result.filename);
-      }
-    });
+    const downloadable = results.flatMap((result) =>
+      result.success && result.blob && result.filename
+        ? [{ blob: result.blob, filename: result.filename }]
+        : [],
+    );
+    downloadBlobsStaggered(downloadable);
   };
 
   return (
@@ -234,19 +243,22 @@ export default function ConvertFilesPanel({ files = [] }: ConvertProps) {
 
             <CardContent className="p-6 sm:p-8 pt-0 sm:pt-0 space-y-6 relative z-10 flex-1 flex flex-col justify-between">
               <div className="space-y-3">
-                {results.map((result) => {
+                {results.map((result, index) => {
                   const fileSize = result.blob ? (result.blob.size / 1024).toFixed(2) : "0.00";
+                  const resultFormat = result.filename
+                    ? formatLabel(extensionOf(result.filename) ?? targetFormat)
+                    : formatTag;
 
                   return (
                     <div
-                      key={result.originalName}
+                      key={`${result.originalName}-${index}`}
                       className="flex items-center justify-between p-3.5 bg-background/80 border border-border/60 rounded-2xl"
                     >
                       <div className="flex items-center gap-3.5 min-w-0">
                         <div className="relative flex items-center justify-center size-11 rounded-full bg-primary/10 border border-primary/20 shrink-0">
                           <FileText className="size-5 text-primary" />
                           <span className="absolute -bottom-1 text-[8px] font-mono font-bold text-primary bg-background px-1 rounded-sm border border-primary/30 shadow-xs">
-                            {formatTag}
+                            {resultFormat}
                           </span>
                         </div>
                         <div className="min-w-0 text-left">

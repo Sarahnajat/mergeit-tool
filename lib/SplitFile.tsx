@@ -25,10 +25,19 @@ interface Caption {
   text: string
 }
 
-interface AssDocument {
-  captions: Caption[]
-  header: string
+interface AssCaption extends Caption {
+  dialogueValues: string[]
 }
+
+interface AssDocument {
+  captions: AssCaption[]
+  header: string
+  formatFields: string[]
+}
+
+const DEFAULT_ASS_FORMAT_FIELDS = [
+  'layer', 'start', 'end', 'style', 'name', 'marginl', 'marginr', 'marginv', 'effect', 'text',
+]
 
 function getFormat(name: string): SubtitleFormat | null {
   const extension = name.split('.').pop()?.toLowerCase()
@@ -42,13 +51,18 @@ function pad(value: number, length = 2): string {
 function srtTimeToMs(value: string): number {
   const match = value.trim().match(/^(\d+):(\d{2}):(\d{2})[,\.](\d{3})$/)
   if (!match) throw new Error(`Invalid SRT timestamp: ${value}`)
-  return (((Number(match[1]) * 60 + Number(match[2])) * 60 + Number(match[3])) * 1000) + Number(match[4])
+  return ((Number(match[1]) * 3600 + Number(match[2]) * 60 + Number(match[3])) * 1000) + Number(match[4])
+}
+
+function assFractionToMs(fraction: string): number {
+  const normalized = fraction.padEnd(2, '0').slice(0, 2)
+  return Number(normalized) * 10
 }
 
 function assTimeToMs(value: string): number {
   const match = value.trim().match(/^(\d+):(\d{1,2}):(\d{1,2})[\.:](\d{1,2})$/)
   if (!match) throw new Error(`Invalid ASS timestamp: ${value}`)
-  return ((Number(match[1]) * 3600 + Number(match[2]) * 60 + Number(match[3])) * 1000) + Number(match[4]) * 10
+  return ((Number(match[1]) * 3600 + Number(match[2]) * 60 + Number(match[3])) * 1000) + assFractionToMs(match[4])
 }
 
 function msToSrtTime(ms: number): string {
@@ -103,7 +117,7 @@ function parseAss(source: string): AssDocument {
   const formatLine = lines.find((line, index) => index > eventsIndex && /^Format\s*:/i.test(line))
   const fields = formatLine
     ? formatLine.slice(formatLine.indexOf(':') + 1).split(',').map((field) => field.trim().toLowerCase())
-    : ['layer', 'start', 'end', 'style', 'name', 'marginl', 'marginr', 'marginv', 'effect', 'text']
+    : DEFAULT_ASS_FORMAT_FIELDS
   const startIndex = fields.indexOf('start')
   const endIndex = fields.indexOf('end')
   const textIndex = fields.indexOf('text')
@@ -116,20 +130,32 @@ function parseAss(source: string): AssDocument {
       start: assTimeToMs(values[startIndex]),
       end: assTimeToMs(values[endIndex]),
       text: values[textIndex],
+      dialogueValues: values,
     }
-  }).filter((caption): caption is Caption => caption !== null)
+  }).filter((caption): caption is AssCaption => caption !== null)
 
   const firstDialogueIndex = lines.findIndex((line) => /^Dialogue\s*:/i.test(line))
   const header = lines.slice(0, firstDialogueIndex < 0 ? lines.length : firstDialogueIndex).join('\r\n').replace(/\r?\n*$/, '')
-  return { captions, header }
+  return { captions, header, formatFields: fields }
 }
 
 function buildSrt(captions: Caption[]): string {
   return captions.map((caption, index) => `${index + 1}\r\n${msToSrtTime(caption.start)} --> ${msToSrtTime(caption.end)}\r\n${caption.text}`).join('\r\n\r\n') + '\r\n'
 }
 
-function buildAss(document: AssDocument, captions: Caption[]): string {
-  const events = captions.map((caption) => `Dialogue: 0,${msToAssTime(caption.start)},${msToAssTime(caption.end)},Default,,0,0,0,,${caption.text}`)
+function buildAss(document: AssDocument, captions: AssCaption[]): string {
+  const startIndex = document.formatFields.indexOf('start')
+  const endIndex = document.formatFields.indexOf('end')
+  const textIndex = document.formatFields.indexOf('text')
+
+  const events = captions.map((caption) => {
+    const values = [...caption.dialogueValues]
+    values[startIndex] = msToAssTime(caption.start)
+    values[endIndex] = msToAssTime(caption.end)
+    if (textIndex >= 0) values[textIndex] = caption.text
+    return `Dialogue: ${values.join(',')}`
+  })
+
   return `${document.header}\r\n${events.join('\r\n')}\r\n`
 }
 
@@ -184,7 +210,9 @@ export async function splitSubtitle(file: File, options: SplitOptions): Promise<
     const baseName = file.name.replace(/\.(srt|ass)$/i, '')
 
     const parts = groups.map((group, index) => {
-      const content = format === 'ass' ? buildAss(document!, group) : buildSrt(group)
+      const content = format === 'ass'
+        ? buildAss(document!, group as AssCaption[])
+        : buildSrt(group)
       const filename = `${baseName}_part_${pad(index + 1)}.${format}`
       return { index: index + 1, filename, blob: new Blob([content], { type: 'text/plain;charset=utf-8' }) }
     })
