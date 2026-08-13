@@ -110,7 +110,7 @@ function SplitPanel() {
         <CardContent className="px-4 py-6 space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-[10px] font-mono font-bold text-muted-foreground  tracking-widest">
+              <label className="text-xs font-medium text-muted-foreground">
                 Split Method
               </label>
               <div className="flex items-center justify-between border border-border bg-card rounded-xl px-4 py-3 text-sm text-foreground">
@@ -120,7 +120,7 @@ function SplitPanel() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-mono font-bold text-muted-foreground  tracking-widest">
+              <label className="text-xs font-medium text-muted-foreground">
                 Duration per File (minutes)
               </label>
               <input
@@ -208,7 +208,7 @@ function ConvertPanel() {
         <CardContent className="px-4 py-6 space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-[10px] font-mono font-bold text-muted-foreground  tracking-widest">
+              <label className="text-xs font-medium text-muted-foreground">
                 Target Format
               </label>
               <Select defaultValue="ass">
@@ -225,7 +225,7 @@ function ConvertPanel() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-mono font-bold text-muted-foreground  tracking-widest">
+              <label className="text-xs font-medium text-muted-foreground">
                 Preserve Styling
               </label>
               <Select defaultValue="yes">

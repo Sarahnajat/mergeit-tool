@@ -111,10 +111,10 @@ export const FeaturesSection = () => {
           <div className="space-y-4 sm:space-y-6">
           <Badge
               variant="secondary"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1 text-xs font-mono font-bold tracking-widest bg-primary/10 border border-primary/20 text-primary rounded-full mb-3 uppercase"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1 text-xs font-medium tracking-wide bg-primary/10 border border-primary/20 text-primary rounded-full mb-3"
             >
             <SquareStack size="4" />
-            ALL-IN-ONE
+            All-in-one
           </Badge>
             <h2 className="text-4xl sm:text-6xl md:text-7xl font-black text-foreground tracking-tighter  leading-none">
               <span className="text-primary">Three</span> Tools.
@@ -122,7 +122,7 @@ export const FeaturesSection = () => {
               One File Type.
             </h2>
           </div>
-          <p className="mt-6 max-w-xs text-muted-foreground font-mono text-xs sm:text-sm leading-relaxed tracking-widest">
+          <p className="mt-6 max-w-xs text-muted-foreground text-xs sm:text-sm leading-relaxed">
             To split, merge, and Convert SRT files. built for speed and
             precision.
           </p>

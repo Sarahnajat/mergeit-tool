@@ -143,9 +143,9 @@ export default function AboutPage() {
              
               <div className="absolute -top-24 left-1/2 -translate-x-1/2 size-72 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
 
-              <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold tracking-wider uppercase mb-6 relative z-10">
+              <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-medium tracking-wide mb-6 relative z-10">
                 <FileHeart className="size-3.5" />
-                <span>100% FREE & LOCAL</span>
+                <span>100% free & local</span>
               </div>
 
               {/* Main Card Title */}

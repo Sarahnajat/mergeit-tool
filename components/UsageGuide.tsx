@@ -63,7 +63,7 @@ export const UsageGuide = () => {
         >
           <Badge
               variant="secondary"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1 text-xs font-mono font-bold tracking-widest bg-primary/10 border border-primary/20 text-primary rounded-full mb-3 uppercase"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1 text-xs font-medium tracking-wide bg-primary/10 border border-primary/20 text-primary rounded-full mb-3"
             >
             <FootprintsIcon size="4" />
             How it works

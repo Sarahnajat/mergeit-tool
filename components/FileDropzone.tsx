@@ -88,7 +88,7 @@ export function FileDropzone({
         </label>
         
         <input
-          accept=".srt"
+           accept=".srt,.ass"
           className="hidden"
           id="fileUpload"
           multiple={multiple}

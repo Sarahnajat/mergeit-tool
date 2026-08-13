@@ -242,10 +242,10 @@ export function HeroVisual() {
       {/*  Header Badge */}
       <Badge
         variant="secondary"
-        className="px-4 py-1.5 text-[10px] font-mono font-bold tracking-widest bg-primary/10 border border-primary/20 text-primary rounded-full inline-flex items-center gap-1.5 z-20 shadow-xs uppercase"
+        className="px-4 py-1.5 text-xs font-medium tracking-wide bg-primary/10 border border-primary/20 text-primary rounded-full inline-flex items-center gap-1.5 z-20 shadow-xs"
       >
         <Sticker className="size-3.5" />
-        ALL YOUR FILES, ONE PLACE
+        All your files, one place
       </Badge>
 
       {/*  Stacked Cards Container */}
@@ -279,7 +279,6 @@ export function HeroVisual() {
         })}
       </div>
 
-      {/* 3. Stats Boxes Bottom */}
       <div className="w-full grid grid-cols-3 gap-2.5 z-20 pt-2">
         {[
           { value: "100%", label: "Client-Side" },
@@ -293,7 +292,7 @@ export function HeroVisual() {
             <p className="text-xs sm:text-sm font-black tracking-tight text-primary truncate">
               {item.value}
             </p>
-            <p className="mt-0.5 text-[8px] font-mono uppercase tracking-wider text-muted-foreground truncate">
+            <p className="mt-0.5 text-[8px] font-mono tracking-wide text-muted-foreground truncate">
               {item.label}
             </p>
           </div>

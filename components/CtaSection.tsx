@@ -24,10 +24,10 @@ export function CtaSection() {
           >
             <Badge
               variant="secondary"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1 text-xs font-mono font-bold tracking-widest bg-primary/10 border border-primary/20 text-primary rounded-full mb-3 uppercase"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1 text-xs font-medium tracking-wide bg-primary/10 border border-primary/20 text-primary rounded-full mb-3"
             >
               <FilePenLine className="h-3.5 w-3.5" />
-              GET STARTED TODAY
+              Get started today
             </Badge>
 
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-foreground leading-tight">
@@ -53,7 +53,7 @@ export function CtaSection() {
           >
             <Badge
               variant="secondary"
-              className="inline-flex items-center gap-2 px-4 py-1.5 text-[10px] font-mono font-bold tracking-[0.25em] bg-primary/10 border border-primary/20 text-primary rounded-full mb-4 uppercase"
+              className="inline-flex items-center gap-2 px-4 py-1.5 text-xs font-medium tracking-wide bg-primary/10 border border-primary/20 text-primary rounded-full mb-4"
             >
               <GlobeLock className="h-3.5 w-3.5" aria-hidden="true" />
               100% Free, No Sign-up

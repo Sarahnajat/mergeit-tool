@@ -1,138 +1,164 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { ArrowRightLeft as ConvertIcon, FileText, Download, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from '@/components/ui/card'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { Button } from '@/components/ui/button'
-import { convertSubtitle, type SubtitleFormat } from '@/lib/Convert' 
+import { useState } from "react";
+import { ArrowRightLeft as ConvertIcon, FileText, Download, AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { useToolToast } from "@/components/AlertMessage";
+import { convertSubtitle, extensionOf, formatExtension, formatLabel, type SubtitleFormat } from "@/lib/Convert";
 
 interface ConvertProps {
-  files?: File[]
+  files?: File[];
 }
 
 interface ConvertedResult {
-  originalName: string
-  success: boolean
-  blob?: Blob
-  filename?: string
-  error?: string
+  originalName: string;
+  success: boolean;
+  blob?: Blob;
+  filename?: string;
+  error?: string;
+}
+
+function downloadBlob(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function fileExtensionLabel(name: string): string {
+  const extension = extensionOf(name);
+  if (extension) return formatLabel(extension);
+  if (!name.includes(".")) return "FILE";
+  return name.split(".").pop()?.toUpperCase() ?? "FILE";
 }
 
 export default function ConvertFilesPanel({ files = [] }: ConvertProps) {
-  const [isConverted, setIsConverted] = useState(false)
-  const [targetFormat, setTargetFormat] = useState<SubtitleFormat>('ass') 
-  const [preserveStyling, setPreserveStyling] = useState('yes')
+  const { showToast } = useToolToast();
+  const [targetFormat, setTargetFormat] = useState<SubtitleFormat>("ass");
+  const [preserveStyling, setPreserveStyling] = useState(true);
+  const [isConverting, setIsConverting] = useState(false);
+  const [results, setResults] = useState<ConvertedResult[]>([]);
+  const [conversionError, setConversionError] = useState<string | null>(null);
 
- 
-  const [isConverting, setIsConverting] = useState(false)
-  const [results, setResults] = useState<ConvertedResult[]>([])
-  const [conversionError, setConversionError] = useState<string | null>(null)
+  const hasFiles = files.length > 0;
+  const sameFormatFiles = files.filter((file) => extensionOf(file.name) === targetFormat);
+  const unsupportedFiles = files.filter((file) => extensionOf(file.name) === null);
+  const canConvert = hasFiles && sameFormatFiles.length === 0 && unsupportedFiles.length === 0;
+  const hasResults = results.length > 0;
+  const formatTag = formatLabel(targetFormat);
 
-  const hasFiles = files.length > 0
-  const totalSizeKB = (files.reduce((total, file) => total + file.size, 0) / 1024).toFixed(2)
-  const extTag = targetFormat.to()
+  const validationMessage = conversionError
+    ?? (!hasFiles
+      ? "Please select a file to convert"
+      : unsupportedFiles.length > 0
+        ? "Only .srt and .ass files are supported."
+        : sameFormatFiles.length > 0
+          ? `${sameFormatFiles.map((file) => file.name).join(", ")} is already ${formatExtension(targetFormat)}. Choose the other format.`
+          : null);
 
   const handleConvertClick = async () => {
-    if (!hasFiles) return
+    if (!canConvert) return;
 
-    setIsConverting(true)
-    setConversionError(null)
+    setIsConverting(true);
+    setConversionError(null);
+    setResults([]);
 
     try {
-      // Run conversion for every uploaded file
       const outcomes = await Promise.all(
         files.map(async (file) => {
-          const result = await convertSubtitle(file, targetFormat)
+          const result = await convertSubtitle(file, targetFormat, preserveStyling);
           return {
             originalName: file.name,
             success: result.success,
             blob: result.success ? result.blob : undefined,
             filename: result.success ? result.filename : undefined,
             error: result.success ? undefined : result.error,
-          }
-        })
-      )
+          };
+        }),
+      );
 
-      setResults(outcomes)
-      setIsConverted(true)
-    } catch (err) {
-      setConversionError(err instanceof Error ? err.message : 'Conversion failed')
+      setResults(outcomes);
+
+      const successCount = outcomes.filter((outcome) => outcome.success).length;
+      const failedCount = outcomes.length - successCount;
+
+      if (successCount > 0) {
+        showToast({
+          type: "success",
+          title: "Conversion complete",
+          message: successCount === 1
+            ? `Successfully converted to ${outcomes.find((outcome) => outcome.success)?.filename ?? formatLabel(targetFormat)}.`
+            : `Successfully converted ${successCount} file${successCount === 1 ? "" : "s"} to ${formatLabel(targetFormat)}.`,
+        });
+      }
+
+      if (failedCount > 0) {
+        const firstError = outcomes.find((outcome) => !outcome.success)?.error ?? "Conversion failed.";
+        showToast({
+          type: "error",
+          title: failedCount === outcomes.length ? "Conversion failed" : "Some files failed",
+          message: failedCount === outcomes.length
+            ? firstError
+            : `${failedCount} file${failedCount === 1 ? "" : "s"} could not be converted.`,
+        });
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Conversion failed.";
+      setConversionError(message);
+      showToast({ type: "error", title: "Conversion failed", message });
     } finally {
-      setIsConverting(false)
+      setIsConverting(false);
     }
-  }
-
+  };
 
   const handleDownload = () => {
     results.forEach((result) => {
-      if (!result.success || !result.blob || !result.filename) return
-
-      const url = URL.createObjectURL(result.blob)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = result.filename
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      URL.revokeObjectURL(url)
-    })
-  }
+      if (result.success && result.blob && result.filename) {
+        downloadBlob(result.blob, result.filename);
+      }
+    });
+  };
 
   return (
     <div className="space-y-4 w-full">
-
-      <div className={cn("w-full", isConverted && "grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch")}>
-        {/* 1. CONVERT CONFIGURATION CARD */}
+      <div className={cn("w-full", hasResults && "grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch")}>
         <Card className="rounded-3xl shadow-sm border border-border flex flex-col justify-between">
           <CardHeader className="p-6 sm:p-8 pb-4 sm:pb-4">
-            <CardTitle className="text-sm font-bold  tracking-wider">
+            <CardTitle className="text-sm font-bold tracking-wider">
               Convert Configuration
             </CardTitle>
           </CardHeader>
 
           <CardContent className="p-6 sm:p-8 pt-0 sm:pt-0 space-y-6 flex-1 flex flex-col justify-between">
             <div className="space-y-2.5">
-              {files.map((file, index) => {
-                const inputExt = file.name?.includes('.')
-                  ? file.name.split('.').pop()?.to()
-                  : 'SRT'
-                const fileSize = (file.size / 1024).toFixed(2)
-
-                return (
-                  <div
-                    key={index}
-                    className="flex items-center gap-3.5 p-3.5 bg-background border border-border rounded-2xl transition-colors hover:border-primary/30"
-                  >
-                    <div className="relative flex items-center justify-center size-11 rounded-full bg-primary/10 border border-primary/20 shrink-0">
-                      <FileText className="size-5 text-primary" />
-                      <span className="absolute -bottom-1 text-[8px] font-mono font-bold text-primary  bg-background px-1 rounded-sm border border-primary/30 shadow-xs">
-                        {inputExt}
-                      </span>
-                    </div>
-                    <div className="min-w-0 text-left flex-1">
-                      <p className="text-sm font-semibold text-foreground truncate">
-                        {file.name}
-                      </p>
-                      <p className="text-xs font-mono text-muted-foreground mt-0.5">
-                        {fileSize} KB
-                      </p>
-                    </div>
+              {files.map((file, index) => (
+                <div
+                  key={`${file.name}-${index}`}
+                  className="flex items-center gap-3.5 p-3.5 bg-background border border-border rounded-2xl transition-colors hover:border-primary/30"
+                >
+                  <div className="relative flex items-center justify-center size-11 rounded-full bg-primary/10 border border-primary/20 shrink-0">
+                    <FileText className="size-5 text-primary" />
+                    <span className="absolute -bottom-1 text-[8px] font-mono font-bold text-primary bg-background px-1 rounded-sm border border-primary/30 shadow-xs">
+                      {fileExtensionLabel(file.name)}
+                    </span>
                   </div>
-                )
-              })}
+                  <div className="min-w-0 text-left flex-1">
+                    <p className="text-sm font-semibold text-foreground truncate">
+                      {file.name}
+                    </p>
+                    <p className="text-xs font-mono text-muted-foreground mt-0.5">
+                      {(file.size / 1024).toFixed(2)} KB
+                    </p>
+                  </div>
+                </div>
+              ))}
               {files.length === 0 && (
                 <div className="px-4 py-3 bg-background/50 border border-border border-dashed rounded-xl text-sm text-muted-foreground text-center">
                   Awaiting files...
@@ -142,11 +168,10 @@ export default function ConvertFilesPanel({ files = [] }: ConvertProps) {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2 text-left">
-                <label className="text-[10px] font-mono font-bold text-muted-foreground tracking-widest block">
+                <label className="text-xs font-medium text-muted-foreground block">
                   Target Format
                 </label>
-                {/* CHANGED: values now match SubtitleFormat ("ass" / "srt"), no leading dot */}
-                <Select value={targetFormat} onValueChange={(v) => setTargetFormat(v as SubtitleFormat)}>
+                <Select value={targetFormat} onValueChange={(value) => setTargetFormat(value as SubtitleFormat)}>
                   <SelectTrigger className="h-12 w-full rounded-xl border-border bg-background">
                     <SelectValue placeholder="Select format" />
                   </SelectTrigger>
@@ -158,10 +183,13 @@ export default function ConvertFilesPanel({ files = [] }: ConvertProps) {
               </div>
 
               <div className="space-y-2 text-left">
-                <label className="text-[10px] font-mono font-bold text-muted-foreground tracking-widest block">
+                <label className="text-xs font-medium text-muted-foreground block">
                   Preserve Styling
                 </label>
-                <Select value={preserveStyling} onValueChange={setPreserveStyling}>
+                <Select
+                  value={preserveStyling ? "yes" : "no"}
+                  onValueChange={(value) => setPreserveStyling(value === "yes")}
+                >
                   <SelectTrigger className="h-12 w-full rounded-xl border-border bg-background">
                     <SelectValue placeholder="Select option" />
                   </SelectTrigger>
@@ -177,36 +205,24 @@ export default function ConvertFilesPanel({ files = [] }: ConvertProps) {
               <Button
                 type="button"
                 onClick={handleConvertClick}
-                disabled={!hasFiles || isConverting}
-                className="w-full sm:w-auto px-8 h-12 text-xs font-bold tracking-widest rounded-xl shadow-md shadow-primary/20 active:scale-95"
+                disabled={!canConvert || isConverting}
+                className="w-full sm:w-auto px-8 h-12 text-xs font-semibold rounded-xl shadow-md shadow-primary/20 active:scale-95"
               >
-                {isConverting ? (
-                  <Loader2 className="size-4 animate-spin" />
-                ) : (
-                  <ConvertIcon className="size-4" />
-                )}
-                {isConverting ? 'Converting...' : `Convert to ${extTag}`}
+                {isConverting ? <Loader2 className="size-4 animate-spin" /> : <ConvertIcon className="size-4" />}
+                {isConverting ? "Converting..." : `Convert to ${formatTag}`}
               </Button>
 
-              {!hasFiles && (
+              {validationMessage && (
                 <p className="flex items-center gap-1.5 text-xs text-destructive font-medium tracking-wide">
                   <AlertCircle className="size-3.5" />
-                  Please select a file to convert
-                </p>
-              )}
-
-              {conversionError && (
-                <p className="flex items-center gap-1.5 text-xs text-destructive font-medium tracking-wide">
-                  <AlertCircle className="size-3.5" />
-                  {conversionError}
+                  {validationMessage}
                 </p>
               )}
             </div>
           </CardContent>
         </Card>
 
-        {/* 2. CONVERT RESULTS CARD */}
-        {isConverted && (
+        {hasResults && (
           <Card className="rounded-3xl shadow-sm bg-primary/5 border-primary/20 relative overflow-hidden flex flex-col justify-between">
             <div className="absolute top-0 right-0 -mr-16 -mt-16 size-48 bg-primary/10 blur-3xl rounded-full pointer-events-none" />
 
@@ -218,20 +234,19 @@ export default function ConvertFilesPanel({ files = [] }: ConvertProps) {
 
             <CardContent className="p-6 sm:p-8 pt-0 sm:pt-0 space-y-6 relative z-10 flex-1 flex flex-col justify-between">
               <div className="space-y-3">
-           
-                {results.map((result, idx) => {
-                  const fileSize = result.blob ? (result.blob.size / 1024).toFixed(2) : '0.00'
+                {results.map((result) => {
+                  const fileSize = result.blob ? (result.blob.size / 1024).toFixed(2) : "0.00";
 
                   return (
                     <div
-                      key={idx}
+                      key={result.originalName}
                       className="flex items-center justify-between p-3.5 bg-background/80 border border-border/60 rounded-2xl"
                     >
                       <div className="flex items-center gap-3.5 min-w-0">
                         <div className="relative flex items-center justify-center size-11 rounded-full bg-primary/10 border border-primary/20 shrink-0">
                           <FileText className="size-5 text-primary" />
-                          <span className="absolute -bottom-1 text-[8px] font-mono font-bold text-primary  bg-background px-1 rounded-sm border border-primary/30 shadow-xs">
-                            {extTag}
+                          <span className="absolute -bottom-1 text-[8px] font-mono font-bold text-primary bg-background px-1 rounded-sm border border-primary/30 shadow-xs">
+                            {formatTag}
                           </span>
                         </div>
                         <div className="min-w-0 text-left">
@@ -251,14 +266,14 @@ export default function ConvertFilesPanel({ files = [] }: ConvertProps) {
                             ) : (
                               <span className="flex items-center gap-1 font-semibold text-destructive">
                                 <AlertCircle className="size-3" />
-                                {result.error || 'Failed'}
+                                {result.error || "Failed"}
                               </span>
                             )}
                           </div>
                         </div>
                       </div>
                     </div>
-                  )
+                  );
                 })}
               </div>
 
@@ -266,18 +281,17 @@ export default function ConvertFilesPanel({ files = [] }: ConvertProps) {
                 <Button
                   type="button"
                   onClick={handleDownload}
-                  disabled={!results.some((r) => r.success)}
-                  className="w-full sm:w-auto px-8 h-12 text-xs font-bold tracking-widest rounded-xl shadow-md shadow-primary/20 active:scale-95"
+                  disabled={!results.some((result) => result.success)}
+                  className="w-full sm:w-auto px-8 h-12 text-xs font-semibold rounded-xl shadow-md shadow-primary/20 active:scale-95"
                 >
                   <Download className="size-4" />
-                  Download {results.length > 1 ? 'Converted Files' : 'Converted File'}
+                  Download {results.length > 1 ? "Converted Files" : "Converted File"}
                 </Button>
               </div>
             </CardContent>
           </Card>
         )}
       </div>
-
     </div>
-  )
+  );
 }
