@@ -30,15 +30,7 @@ const benefits = [
 export default function AboutSection() {
   return (
     <section className="space-y-8">
-      <div className="max-w-2xl">
-        <p className="font-mono text-[10px] font-bold tracking-[0.2em] text-primary">
-          WHY USE THESE TOOLS
-        </p>
-        <h2 className="mt-3 text-3xl font-black tracking-[-0.04em] text-foreground md:text-5xl">
-          Everything you need. Nothing you don’t.
-        </h2>
-      </div>
-
+     
       <div className="grid gap-5 md:grid-cols-3">
         {benefits.map((benefit, index) => {
           const Icon = benefit.icon
