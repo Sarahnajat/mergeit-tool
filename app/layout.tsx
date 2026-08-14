@@ -14,9 +14,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl = "https://mergeittool.vercel.app";
 
-
-export const metadata = {
+export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
     default: "MergeIt",
     template: "%s | MergeIt",
@@ -28,7 +29,7 @@ export const metadata = {
   openGraph: {
     title: "MergeIt – Subtitle Management Tool",
     description: "Split, merge, and convert SRT and ASS subtitle files directly in your browser.",
-    url: "https://mergeit.com",
+    url: siteUrl,
     siteName: "MergeIt",
     images: [
       {
