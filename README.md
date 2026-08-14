@@ -1,36 +1,113 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
+
+<img src="app/icon.svg" alt="MergeIt logo" width="72" height="72" />
+
+# MergeIt
+
+**Professional subtitle management, reimagined.**
+
+Split, merge, and optimize your SRT and ASS files with precision timing and perfect formatting.
+
+[**Live App →**](https://mergeittool.vercel.app/)
+
+</div>
+
+---
+
+## What is MergeIt?
+
+MergeIt is a free, open-source tool for working with subtitle files. Whether you're stitching together split releases, cleaning up timing drift, or converting between formats, MergeIt gives you a fast, no-nonsense interface to get it done in the browser — no installs, no uploads to a mystery server.
+
+### Features
+
+- ✂️ **Split** long subtitle files into multiple parts
+- 🔗 **Merge** multiple SRT/ASS files into one
+- 🎨 **Format-perfect output** for both `.srt` and `.ass`
+- ⚡ Fast, client-side processing
+- 🌗 Light/dark theme support
+
+> Have an idea for a feature that's missing? [Open an issue](../../issues) — contributions and suggestions are very welcome.
+
+---
+
+## Tech Stack
+
+- [Next.js](https://nextjs.org/) — App Router, React 19
+- [TypeScript](https://www.typescriptlang.org/)
+- [Tailwind CSS v4](https://tailwindcss.com/)
+- [shadcn/ui](https://ui.shadcn.com/) + [Base UI](https://base-ui.com/)
+- [Tabler Icons](https://tabler.io/icons) & [Lucide](https://lucide.dev/)
+- [Motion](https://motion.dev/) for animation
+- [next-themes](https://github.com/pacocoursey/next-themes) for theming
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18.18 or later
+- A package manager: `npm`, `pnpm`, `yarn`, or `bun`
+
+### Installation
+
+```bash
+# Clone the repo
+git clone https://github.com/<your-username>/merge-it.git
+cd merge-it
+
+# Install dependencies
+npm install
+```
+
+### Development
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to see the app running locally.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Build
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm run start
+```
+## Contributing
 
-## Learn More
+Contributions are what make open source awesome — big or small, they're genuinely welcome here.
 
-To learn more about Next.js, take a look at the following resources:
+1. **Fork** the repository
+2. **Create your branch**
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+3. **Make your changes** and commit
+   ```bash
+   git commit -m "feat: add your feature"
+   ```
+4. **Push** to your fork
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+5. **Open a Pull Request** and describe what you changed and why
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Found a bug?
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Open an [issue](../../issues) with steps to reproduce, expected behavior, and actual behavior. Screenshots help a lot.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## License
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is open source under the [MIT License](./LICENSE).
+
+---
+
+<div align="center">
+
+Made with ❤️ by a developer, inspired by real translation challenges.the open-source community — [try it live](https://mergeittool.vercel.app/)
+
+</div>
+
