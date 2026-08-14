@@ -21,7 +21,6 @@ import {
 } from "@/components/ui/navigation-menu"
 import { ThemeToggle } from "./theme/ThemeToggle"
 import { cn } from "@/lib/utils"
-
 import { GithubIcon } from "@/components/animated/GithubAnimatedIcon"
 
 type NavigationSection = {
@@ -65,7 +64,11 @@ function MobileNavigation({ onClose }: { onClose: () => void }) {
   return (
     <>
       {navigationData.map((item) => (
-        <DropdownMenuItem key={item.title} className="rounded-xl p-0" onSelect={onClose}>
+        <DropdownMenuItem
+          key={item.title}
+          className="rounded-xl p-0"
+          onSelect={onClose}
+        >
           <Link
             href={item.href}
             className="flex w-full items-center rounded-xl px-3 py-2.5 text-sm font-medium transition-colors hover:text-primary"
@@ -95,10 +98,7 @@ function MobileNavigation({ onClose }: { onClose: () => void }) {
 }
 
 export default function NavbarSection() {
-
-    const [sticky, setSticky] = useState(
-    () => typeof window !== "undefined" && window.scrollY >= 50
-  )
+  const [sticky, setSticky] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
 
   const handleScroll = useCallback(() => {
@@ -112,7 +112,7 @@ export default function NavbarSection() {
   }, [])
 
   useEffect(() => {
- 
+    handleScroll()
     window.addEventListener("scroll", handleScroll, { passive: true })
     window.addEventListener("resize", handleResize)
 
@@ -134,7 +134,11 @@ export default function NavbarSection() {
               : "border-transparent bg-transparent",
           )}
         >
-          <Link href="/" className="inline-flex items-center gap-2" aria-label="MergeIt home">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2"
+            aria-label="MergeIt home"
+          >
             <Image
               src="/icon.svg"
               alt="MergeIt logo"
@@ -173,19 +177,21 @@ export default function NavbarSection() {
               <ThemeToggle />
 
               <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
-                    aria-expanded={isOpen}
-                    className="rounded-full border-border bg-background"
-                  >
-                    <Menu className="size-5" aria-hidden="true" />
-                  </Button>
+                <DropdownMenuTrigger
+                  aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
+                  aria-expanded={isOpen}
+                  className="flex size-10 items-center justify-center rounded-full border border-border bg-background text-foreground outline-none transition-colors hover:border-primary/40"
+                >
+                  <Menu className="size-5" aria-hidden="true" />
+                  <span className="sr-only">
+                    {isOpen ? "Close navigation menu" : "Open navigation menu"}
+                  </span>
                 </DropdownMenuTrigger>
 
-                <DropdownMenuContent align="end" className="mt-2 w-60 rounded-2xl border-border p-2">
+                <DropdownMenuContent
+                  align="end"
+                  className="mt-2 w-60 rounded-2xl border-border p-2"
+                >
                   <MobileNavigation onClose={() => setIsOpen(false)} />
                 </DropdownMenuContent>
               </DropdownMenu>
