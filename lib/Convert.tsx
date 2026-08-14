@@ -27,9 +27,25 @@ export function formatExtension(format: SubtitleFormat): string {
 }
 
 function srtTimeToMs(value: string): number {
-  const match = value.trim().match(/^(\d+):(\d{2}):(\d{2})[,\.](\d{3})$/)
-  if (!match) throw new Error(`Invalid SRT timestamp: ${value}`)
-  return ((Number(match[1]) * 3600 + Number(match[2]) * 60 + Number(match[3])) * 1000) + Number(match[4])
+  const normalized = value
+    .replace(/^\uFEFF/, '')
+    .trim()
+    .replace(/\s+/g, '')
+
+  const match = normalized.match(
+    /^(\d+):([0-5]?\d):([0-5]?\d)[,.](\d{1,3})$/
+  )
+
+  if (!match) {
+    throw new Error(`Invalid SRT timestamp: ${value.trim()}`)
+  }
+
+  const hours = Number(match[1])
+  const minutes = Number(match[2])
+  const seconds = Number(match[3])
+  const milliseconds = Number(match[4].padEnd(3, '0'))
+
+  return ((hours * 3600 + minutes * 60 + seconds) * 1000) + milliseconds
 }
 
 function assFractionToMs(fraction: string): number {
