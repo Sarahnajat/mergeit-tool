@@ -1,171 +1,192 @@
-"use client";
+"use client"
 
-import { Button } from "@/components/ui/button";
+import { useCallback, useEffect, useState } from "react"
+import Image from "next/image"
+import Link from "next/link"
+import { Menu } from "lucide-react"
+
+import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu"
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-} from "@/components/ui/navigation-menu";
-import { ThemeToggle } from "./theme/ThemeToggle";
-import { cn } from "@/lib/utils";
-import { TextAlignJustify } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
-import  Link  from "next/link";
-import { GithubIcon } from "@/components/animated/GithubAnimatedIcon";
-import Image from "next/image";
-export type NavigationSection = {
-  title: string;
-  href: string;
-};
+} from "@/components/ui/navigation-menu"
+import { ThemeToggle } from "./theme/ThemeToggle"
+import { cn } from "@/lib/utils"
+
+import { GithubIcon } from "@/components/animated/GithubAnimatedIcon"
+
+type NavigationSection = {
+  title: string
+  href: string
+}
 
 const navigationData: NavigationSection[] = [
-  {
-    title: "About",
-    href: "/about",
-  },
-  {
-    title: "Usage Guide",
-    href: "/#usage-guide",
-  },
-  {
-    title: "Features",
-    href: "/#features",
-  },
-  {
-    title: "Preview",
-    href: "/#preview",
-  },
-];
+  { title: "About", href: "/about" },
+  { title: "Usage Guide", href: "/#usage-guide" },
+  { title: "Features", href: "/#features" },
+  { title: "Preview", href: "/#preview" },
+]
 
-const CollaborateButton = ({ className }: { className?: string }) => (
-  <Button
-    className={cn(
-      "relative text-sm font-semibold rounded-full h-10 pl-5 pr-1.5 group transition-all duration-300 w-fit overflow-hidden bg-primary hover:bg-primary/95 text-primary-foreground shadow-sm hover:shadow-md hover:-translate-y-0.5 flex items-center gap-3 cursor-pointer",
-      className,
-    )}
-  >
-    <span className="relative z-10">Star us on Github</span>
+const githubUrl = "https://github.com/sarahnajat/mergeit"
 
-    <div
-      className="
-        relative z-10
-        w-7 h-7
-        bg-primary-foreground
-        text-primary
-        rounded-full
-        flex items-center justify-center
-        shadow-xs
-        transition-transform duration-300
-        group-hover:scale-110
-      "
+function CollaborateButton({ className }: { className?: string }) {
+  return (
+    <Link
+      href={githubUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Open MergeIt on GitHub"
     >
-      <GithubIcon />
-    </div>
-  </Button>
-);
-const Navbar = () => {
-  const [sticky, setSticky] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+      <Button
+        className={cn(
+          "group flex h-10 w-fit items-center gap-3 overflow-hidden rounded-full bg-primary pl-5 pr-1.5 text-sm font-semibold text-primary-foreground shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary/95 hover:shadow-md",
+          className,
+        )}
+      >
+        <span>Star us on GitHub</span>
+        <span className="flex size-7 items-center justify-center rounded-full bg-primary-foreground text-primary shadow-xs transition-transform duration-300 group-hover:scale-110">
+          <GithubIcon />
+        </span>
+      </Button>
+    </Link>
+  )
+}
+
+function MobileNavigation({ onClose }: { onClose: () => void }) {
+  return (
+    <>
+      {navigationData.map((item) => (
+        <DropdownMenuItem key={item.title} className="rounded-xl p-0" onSelect={onClose}>
+          <Link
+            href={item.href}
+            className="flex w-full items-center rounded-xl px-3 py-2.5 text-sm font-medium transition-colors hover:text-primary"
+          >
+            {item.title}
+          </Link>
+        </DropdownMenuItem>
+      ))}
+
+      <DropdownMenuSeparator />
+
+      <DropdownMenuItem className="rounded-xl p-0" onSelect={onClose}>
+        <a
+          href={githubUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex w-full items-center gap-2 rounded-xl bg-primary px-3 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+        >
+          <span className="flex size-5 items-center justify-center">
+            <GithubIcon />
+          </span>
+          Star us on GitHub
+        </a>
+      </DropdownMenuItem>
+    </>
+  )
+}
+
+export default function NavbarSection() {
+
+    const [sticky, setSticky] = useState(
+    () => typeof window !== "undefined" && window.scrollY >= 50
+  )
+  const [isOpen, setIsOpen] = useState(false)
 
   const handleScroll = useCallback(() => {
-    setSticky(window.scrollY >= 50);
-  }, []);
+    setSticky(window.scrollY >= 50)
+  }, [])
 
   const handleResize = useCallback(() => {
-    if (window.innerWidth >= 768) setIsOpen(false);
-  }, []);
+    if (window.innerWidth >= 1024) {
+      setIsOpen(false)
+    }
+  }, [])
 
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    window.addEventListener("resize", handleResize);
+ 
+    window.addEventListener("scroll", handleScroll, { passive: true })
+    window.addEventListener("resize", handleResize)
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [handleScroll, handleResize]);
+      window.removeEventListener("scroll", handleScroll)
+      window.removeEventListener("resize", handleResize)
+    }
+  }, [handleScroll, handleResize])
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-background/50 backdrop-blur-md transition-all duration-300">
-      <div className="max-w-7xl mx-auto w-full px-4 py-4 sm:px-6">
+    <header className="sticky top-0 z-50 w-full bg-background/50 backdrop-blur-md">
+      <div className="mx-auto w-full max-w-7xl px-4 py-4 sm:px-6">
         <nav
+          aria-label="Main navigation"
           className={cn(
-            "w-full flex items-center h-fit justify-between gap-3.5 lg:gap-6 transition-all duration-500",
+            "flex w-full items-center justify-between gap-3.5 transition-all duration-500 lg:gap-6",
             sticky
-              ? "p-2.5 bg-background/80 backdrop-blur-lg border border-border shadow-lg rounded-full"
-              : "bg-transparent border-transparent",
+              ? "rounded-full border border-border bg-background/80 p-2.5 shadow-lg backdrop-blur-lg"
+              : "border-transparent bg-transparent",
           )}
         >
-   <Link href="/" className="inline-flex items-center gap-2">
-  <Image
-    src="/icon.svg"
-    alt="MergeIt Logo"
-    width={40}
-    height={40}
-    className="shrink-0"
-  />
-  <span className="text-lg font-black tracking-tighter text-foreground hover:text-primary transition-colors">
-    Merge<span className="text-primary">It</span>
-  </span>
-</Link>
+          <Link href="/" className="inline-flex items-center gap-2" aria-label="MergeIt home">
+            <Image
+              src="/icon.svg"
+              alt="MergeIt logo"
+              width={40}
+              height={40}
+              className="shrink-0"
+              priority
+            />
+            <span className="text-lg font-black tracking-tighter text-foreground transition-colors hover:text-primary">
+              Merge<span className="text-primary">It</span>
+            </span>
+          </Link>
 
-
-
-          {/* Navigation Menu */}
-          <div>
-            <NavigationMenu className="max-lg:hidden bg-muted p-0.5 rounded-full">
-              <NavigationMenuList className="flex items-center gap-0">
-                {navigationData.map((navItem) => (
-                  <NavigationMenuItem key={navItem.title}>
-                    <NavigationMenuLink
-                      href={navItem.href}
-                      className="px-2 lg:px-4 py-2 text-sm font-medium rounded-full text-muted-foreground hover:text-primary hover:bg-background outline outline-transparent hover:outline-border hover:shadow-xs transition tracking-normal"
-                    >
-                      {navItem.title}
-                    </NavigationMenuLink>
-                  </NavigationMenuItem>
-                ))}
-                <NavigationMenuItem>
-                  <ThemeToggle className="ms-1" />
+          <NavigationMenu className="hidden rounded-full bg-muted p-0.5 lg:flex">
+            <NavigationMenuList className="flex items-center gap-0">
+              {navigationData.map((item) => (
+                <NavigationMenuItem key={item.title}>
+                  <NavigationMenuLink
+                    href={item.href}
+                    className="rounded-full px-2 py-2 text-sm font-medium tracking-normal text-muted-foreground outline-transparent transition hover:bg-background hover:text-primary hover:outline-border hover:shadow-xs lg:px-4"
+                  >
+                    {item.title}
+                  </NavigationMenuLink>
                 </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
-          </div>
+              ))}
+              <NavigationMenuItem>
+                <ThemeToggle className="ms-1" />
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
 
-          {/* CTA Actions */}
           <div className="flex items-center gap-3">
             <CollaborateButton className="hidden lg:flex" />
 
-            {/* Mobile Dropdown Trigger */}
-            <div className="lg:hidden flex items-center gap-2">
+            <div className="flex items-center gap-2 lg:hidden">
               <ThemeToggle />
+
               <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-                <DropdownMenuTrigger className="rounded-full bg-background border border-border p-2 outline-none flex items-center justify-center cursor-pointer transition-colors hover:border-primary/40">
-                  <TextAlignJustify size={20} className="text-foreground" />
-                  <span className="sr-only">Menu</span>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
+                    aria-expanded={isOpen}
+                    className="rounded-full border-border bg-background"
+                  >
+                    <Menu className="size-5" aria-hidden="true" />
+                  </Button>
                 </DropdownMenuTrigger>
 
-                <DropdownMenuContent
-                  align="end"
-                  className="w-56 mt-2 rounded-2xl border border-border"
-                >
-                  {navigationData.map((item) => (
-                    <DropdownMenuItem key={item.title} className="rounded-xl">
-                      <Link
-                        href={item.href}
-                        className="w-full cursor-pointer text-sm font-medium hover:text-primary transition-colors"
-                      >
-                        {item.title}
-                      </Link>
-                    </DropdownMenuItem>
-                  ))}
+                <DropdownMenuContent align="end" className="mt-2 w-60 rounded-2xl border-border p-2">
+                  <MobileNavigation onClose={() => setIsOpen(false)} />
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -173,7 +194,5 @@ const Navbar = () => {
         </nav>
       </div>
     </header>
-  );
-};
-
-export default Navbar;
+  )
+}
