@@ -1,7 +1,12 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { ArrowRight, CheckCircle2, TrendingUp,SquareChartGantt } from "lucide-react";
+import {
+  ArrowRight,
+  CheckCircle2,
+  TrendingUp,
+  SquareChartGantt,
+} from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -56,10 +61,9 @@ export function HeroSection({
     >
       {/* Background Subtle Grid */}
       <div className="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(45deg,var(--border)_0px_1px,transparent_1px_8px)] opacity-30 [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_110%)]" />
-      
+
       <div className="relative z-10 mx-auto max-w-7xl px-6">
         <div className="grid items-center gap-16 lg:grid-cols-2 lg:gap-24">
-          
           {/* Left Column Content */}
           <div className="space-y-8 text-left">
             <MotionDiv
@@ -72,30 +76,28 @@ export function HeroSection({
                 variant="secondary"
                 className="px-3.5 py-1 text-xs font-mono font-bold tracking-widest bg-primary/10 border border-primary/20 text-primary rounded-full mb-4 inline-flex items-center gap-1.5"
               >
-                <SquareChartGantt className="size-3.5" /> 
+                <SquareChartGantt className="size-3.5" />
                 MERGE & MANAGE
               </Badge>
               {/* Badge */}
               {badge && (
-                <Badge
-                  asChild={Boolean(badge.href)}
-                  variant="secondary"
-                  className="w-fit rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-[10px] font-mono font-bold tracking-[0.25em] text-primary transition-all hover:bg-primary/20"
-                >
-                  {badge.href ? (
-                    <a href={badge.href}>{badge.text}</a>
-                  ) : (
-                    <span>{badge.text}</span>
-                  )}
-                </Badge>
-              )}
+  <Badge
+    variant="secondary"
+    className="w-fit rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-[10px] font-mono font-bold tracking-[0.25em] text-primary"
+  >
+    {badge.text}
+  </Badge>
+)}
+
 
               {/* Title */}
               <h1 className="flex flex-col gap-2 text-5xl font-black leading-[0.95] tracking-tighter text-foreground sm:text-6xl lg:text-7xl">
+              
                 <span className="block">
+                Easily   
                   <RotatingText
                     texts={["Convert", "Merge", "Split"]}
-                    mainClassName="overflow-hidden pb-1 text-primary"
+                    mainClassName="ml-3 overflow-hidden pb-1 text-primary"
                     staggerDuration={0.025}
                     splitBy="characters"
                     transition={{
@@ -106,7 +108,7 @@ export function HeroSection({
                     rotationInterval={2500}
                   />
                 </span>
-                <span className="block text-foreground">SRT & ASS files</span>
+                <span className="block text-foreground">Subtitle files</span>
               </h1>
 
               <p className="max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
@@ -140,17 +142,16 @@ export function HeroSection({
               transition={{ duration: 0.4, delay: 0.25 }}
               className="flex flex-col gap-4 sm:flex-row"
             >
-            {primaryButton && (
- <Button
- size="lg"
- onClick={primaryButton.onClick}
- className="group inline-flex items-center justify-center rounded-full bg-primary px-8 py-6 text-xs font-bold tracking-wider text-primary-foreground shadow-sm transition-all duration-300 hover:scale-[1.03] hover:bg-primary/90 hover:shadow-lg active:scale-[0.98]"
->
- {primaryButton.text}
- <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-</Button>
-)}
-
+              {primaryButton && (
+                <Button
+                  size="lg"
+                  onClick={primaryButton.onClick}
+                  className="group inline-flex items-center justify-center rounded-full bg-primary px-8 py-6 text-xs font-bold tracking-wider text-primary-foreground shadow-sm transition-all duration-300 hover:scale-[1.03] hover:bg-primary/90 hover:shadow-lg active:scale-[0.98]"
+                >
+                  {primaryButton.text}
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </Button>
+              )}
 
               {secondaryButton && (
                 <Button
