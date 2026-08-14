@@ -75,7 +75,7 @@ export function CtaSection() {
             className="px-4"
           >
             <p className="text-muted-foreground mx-auto mb-8 max-w-2xl text-sm sm:text-base md:text-lg font-medium leading-relaxed">
-              Split, merge, or convert SRT files in seconds. Nothing leaves your
+              Split, merge, or convert SRT and ASS files in seconds. Nothing leaves your
               browser.
             </p>
           </MotionDiv>
@@ -94,7 +94,7 @@ export function CtaSection() {
 >
   <a href="#features" aria-label="Go to upload section" className="inline-flex items-center">
     <FileText className="mr-2 h-4 w-4" aria-hidden="true" />
-    Upload SRT File
+    Upload Subtitle File
   </a>
 </Button>
             <Button

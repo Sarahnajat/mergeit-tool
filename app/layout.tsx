@@ -23,11 +23,11 @@ export const metadata = {
   },
   description: "Professional subtitle management reimagined.",
   icons: {
-    icon: "/favicon.ico",
+    icon: "/icon.svg",
   },
   openGraph: {
     title: "MergeIt – Subtitle Management Tool",
-    description: "Split, merge, and convert SRT files with precision timing and perfect formatting.",
+    description: "Split, merge, and convert SRT and ASS subtitle files directly in your browser.",
     url: "https://mergeit.com",
     siteName: "MergeIt",
     images: [
@@ -43,7 +43,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title: "MergeIt",
-    description: "Professional subtitle management reimagined.",
+    description: "Professional subtitle management, reimagined for speed and accuracy—convert, split, and merge files seamlessly in your browser.",
     images: ["/og-image.png"],
   },
 };

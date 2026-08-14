@@ -106,7 +106,7 @@ export function HeroSection({
                     rotationInterval={2500}
                   />
                 </span>
-                <span className="block text-foreground">srt files</span>
+                <span className="block text-foreground">SRT & ASS files</span>
               </h1>
 
               <p className="max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">

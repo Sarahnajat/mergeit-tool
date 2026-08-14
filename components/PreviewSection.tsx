@@ -55,7 +55,7 @@ export default function PreviewSection() {
           </h2>
 
           <p className="text-muted-foreground text-sm sm:text-base max-w-lg font-medium leading-relaxed">
-            Pick a tool below. merge combines multiple SRT files into one,
+            Pick a tool below. Merge combines multiple SRT or ASS files into one,
             keeping timing intact so nothing overlaps or drifts.
           </p>
         </MotionDiv>

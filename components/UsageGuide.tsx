@@ -28,7 +28,7 @@ const steps = [
     step: "STEP 02",
     title: "Upload files",
     description:
-      "Drop in your SRT, ASS files. Everything stays private in your browser.",
+      "Drop in your SRT or ASS files. Everything stays private in your browser.",
     icon: UploadCloud,
   },
   {

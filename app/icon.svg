@@ -1,0 +1,11 @@
+<?xml version="1.0" standalone="no"?>
+<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+ width="135" height="129" viewBox="30 15 135 129"
+ preserveAspectRatio="xMidYMid meet">
+<g transform="translate(0.000000,150.000000) scale(0.100000,-0.100000)"
+fill="#1E9DF1" stroke="none">
+<path d="M897 1212 l-137 -137 138 -138 137 -137 138 138 137 137 -138 138
+-137 137 -138 -138z M348 588 L560 375 L560 800 Z M1510 383 L1713 591 L1510 800 Z M1318 754 l-8 -12 -138 -120 -139 -120 -144 123 -144 123 -3 -206 -2
+-206 145 -146 145 -145 150 150 150 151 -2 209 -3 210 -7 -11z"/>
+</g>
+</svg>

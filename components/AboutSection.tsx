@@ -9,14 +9,14 @@ const benefits = [
   {
     icon: SplitIcon,
     eyebrow: "Split",
-    title: "Split SRT Files",
-    description: "Break subtitles into smaller parts for easier editing and syncing.",
+    title: "Split SRT & ASS Files",
+    description: "Break SRT or ASS subtitles into smaller parts for easier editing and syncing.",
   },
   {
     icon: MergeIcon,
     eyebrow: "Merge",
-    title: "Merge SRT Files",
-    description: "Combine multiple subtitle files into one seamless track.",
+    title: "Merge SRT & ASS Files",
+    description: "Combine multiple SRT or ASS subtitle files into one seamless track.",
   },
   {
     icon: File,

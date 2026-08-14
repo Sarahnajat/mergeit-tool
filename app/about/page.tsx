@@ -27,14 +27,14 @@ const features = [
     eyebrow: "Split",
     title: "Split with precision",
     description:
-      "Divide subtitle files by duration, line count, or evenly across multiple files.",
+      "Divide SRT or ASS subtitle files by duration, line count, or evenly across multiple files.",
   },
   {
     icon: Merge,
     eyebrow: "Merge",
     title: "Merge without cleanup",
     description:
-      "Combine translated subtitle parts back together while keeping original order and timing.",
+      "Combine translated SRT or ASS subtitle parts back together while keeping original order and timing.",
   },
   {
     icon: ArrowRightLeft,

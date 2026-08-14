@@ -29,7 +29,7 @@ const tools: {
     label: "Break Files Apart",
     color: "from-chart-1/20",
     icon: SplitSquareHorizontal,
-    dropzoneLabel: "Upload an SRT file to split",
+    dropzoneLabel: "Upload an SRT or ASS file to split",
     multiple: false,
   },
   {
@@ -38,7 +38,7 @@ const tools: {
     label: "Combine Into One",
     color: "from-chart-1/20",
     icon: Merge,
-    dropzoneLabel: "Upload SRT files to merge",
+    dropzoneLabel: "Upload SRT or ASS files to merge",
     multiple: true,
   },
   {
@@ -117,14 +117,14 @@ export const FeaturesSection = () => {
             All-in-one
           </Badge>
             <h2 className="text-4xl sm:text-6xl md:text-7xl font-black text-foreground tracking-tighter  leading-none">
-              <span className="text-primary">Three</span> Tools.
+             one <span className="text-primary">Toolkit.</span> 
               <br />
-              One File Type.
+              Dual Support.
             </h2>
           </div>
           <p className="mt-6 max-w-xs text-muted-foreground text-xs sm:text-sm leading-relaxed">
-            To split, merge, and Convert SRT files. built for speed and
-            precision.
+          Split, merge, and convert SRT and ASS subtitle files directly in your browser. built for speed, privacy, and precision.
+
           </p>
         </MotionDiv>
 

@@ -19,6 +19,7 @@ import { TextAlignJustify } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import  Link  from "next/link";
 import { GithubIcon } from "@/components/animated/GithubAnimatedIcon";
+import Image from "next/image";
 export type NavigationSection = {
   title: string;
   href: string;
@@ -102,13 +103,20 @@ const Navbar = () => {
               : "bg-transparent border-transparent",
           )}
         >
-          {/* Logo Brand Link */}
-          <Link
-            href="/"
-            className="text-lg font-black tracking-tighter text-foreground hover:text-primary  transition-colors pl-4"
-          >
-            mergeit
-          </Link>
+   <Link href="/" className="inline-flex items-center gap-2">
+  <Image
+    src="/icon.svg"
+    alt="MergeIt Logo"
+    width={40}
+    height={40}
+    className="shrink-0"
+  />
+  <span className="text-lg font-black tracking-tighter text-foreground hover:text-primary transition-colors">
+    Merge<span className="text-primary">It</span>
+  </span>
+</Link>
+
+
 
           {/* Navigation Menu */}
           <div>
