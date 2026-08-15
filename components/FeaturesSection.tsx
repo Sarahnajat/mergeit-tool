@@ -74,6 +74,7 @@ const tools: {
 export const FeaturesSection = () => {
   const [activeTool, setActiveTool] = useState<ToolId | null>(null);
   const [files, setFiles] = useState<File[]>([]);
+  const [clickingId, setClickingId] = useState<ToolId | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const toolButtonRefs = useRef<
   Partial<Record<ToolId, HTMLButtonElement | null>>
@@ -86,6 +87,14 @@ export const FeaturesSection = () => {
     setFiles([]);
     window.history.replaceState(null, "", toolToHash(id));
     requestAnimationFrame(() => toolButtonRefs.current[id]?.focus());
+  };
+
+  const handleCardClick = (id: ToolId) => {
+    setClickingId(id);
+    window.setTimeout(() => {
+      selectTool(id);
+      setClickingId(null);
+    }, 350);
   };
 
   useEffect(() => {
@@ -150,7 +159,7 @@ export const FeaturesSection = () => {
   };
 
   return (
-    <section    id="features" className="bg-background py-16 sm:py-24 md:py-32 px-4 sm:px-6 min-h-screen font-dmSans relative overflow-hidden">
+    <section id="features" className="bg-background pt-16 sm:pt-24 md:pt-32 pb-6 sm:pb-8 md:pb-10 px-4 sm:px-6 min-h-screen font-dmSans relative overflow-hidden">
       <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,var(--border)_0px_1px,transparent_1px_8px)] opacity-40 mask-[radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto space-y-12 sm:space-y-16 relative z-10">
@@ -183,43 +192,53 @@ export const FeaturesSection = () => {
 
         {!activeTool ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {tools.map((card, index) => (
-              <MotionDiv
-                key={card.id}
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
-              >
-                <Card
-                  id={card.id.toLowerCase()}
-                  onClick={() => selectTool(card.id)}
-                  className={cn(
-                    "scroll-mt-24",
-                    "group relative text-left rounded-3xl cursor-pointer overflow-hidden transition-all duration-300 border border-border hover:border-primary/40 hover:shadow-md focus-within:ring-2 focus-within:ring-primary/30",
-                  )}
+            {tools.map((card, index) => {
+              const isClicking = clickingId === card.id;
+
+              return (
+                <MotionDiv
+                  key={card.id}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{
+                    opacity: clickingId ? (isClicking ? 0.85 : 0) : 1,
+                    y: 0,
+                    scale: clickingId ? (isClicking ? 0.94 : 0.9) : 1,
+                  }}
+                  transition={{ duration: clickingId ? 0.35 : 0.4, delay: clickingId ? 0 : index * 0.1, ease: "easeInOut" }}
                 >
-                  <div
+                  <Card
+                    id={card.id.toLowerCase()}
+                    onClick={() => handleCardClick(card.id)}
                     className={cn(
-                      "absolute inset-0 bg-gradient-to-br to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none",
-                      card.color,
+                      "scroll-mt-24",
+                      "group relative text-left rounded-3xl cursor-pointer overflow-hidden transition-all duration-300 border border-border hover:border-primary/40 hover:shadow-md focus-within:ring-2 focus-within:ring-primary/30",
+                      isClicking && "border-primary/40",
                     )}
-                  />
-                  <CardContent className="relative z-10 p-8 sm:p-10 lg:p-12 space-y-6">
-                    <div className="space-y-2 sm:space-y-3">
-                      <h3 className="text-2xl sm:text-3xl font-black text-card-foreground tracking-tighter">
-                        {card.title}
-                      </h3>
-                      <p className="text-sm sm:text-base font-bold text-muted-foreground">
-                        {card.label}
-                      </p>
-                    </div>
-                    <div className="size-12 sm:size-14 rounded-2xl bg-accent flex items-center justify-center shrink-0">
-                      <card.icon className="size-5 sm:size-6 text-accent-foreground" />
-                    </div>
-                  </CardContent>
-                </Card>
-              </MotionDiv>
-            ))}
+                  >
+                    <div
+                      className={cn(
+                        "absolute inset-0 bg-gradient-to-br to-transparent transition-opacity duration-500 pointer-events-none",
+                        isClicking ? "opacity-60" : "opacity-0 group-hover:opacity-100",
+                        card.color,
+                      )}
+                    />
+                    <CardContent className="relative z-10 p-8 sm:p-10 lg:p-12 space-y-6">
+                      <div className="space-y-2 sm:space-y-3">
+                        <h3 className="text-2xl sm:text-3xl font-black text-card-foreground tracking-tighter">
+                          {card.title}
+                        </h3>
+                        <p className="text-sm sm:text-base font-bold text-muted-foreground">
+                          {card.label}
+                        </p>
+                      </div>
+                      <div className="size-12 sm:size-14 rounded-2xl bg-accent flex items-center justify-center shrink-0">
+                        <card.icon className="size-5 sm:size-6 text-accent-foreground" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </MotionDiv>
+              );
+            })}
           </div>
         ) : (
           <div className="space-y-8">

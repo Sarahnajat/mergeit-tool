@@ -29,10 +29,10 @@ type NavigationSection = {
 }
 
 const navigationData: NavigationSection[] = [
-  { title: "About", href: "/about" },
-  { title: "Split", href: "/#split" },
+   { title: "Split", href: "/#split" },
   { title: "Merge", href: "/#merge" },
   { title: "Convert", href: "/#convert" },
+  { title: "About", href: "/about" },
   
 ]
 
