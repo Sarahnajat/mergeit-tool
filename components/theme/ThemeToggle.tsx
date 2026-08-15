@@ -23,8 +23,8 @@ export function ThemeToggle({ className }: { className?: string }) {
               className,
             )}
           >
-            <Sun className="size-[18px] dark:hidden" />
-            <Moon className="size-[18px] hidden dark:block" />
+            <Sun className="size-[18px] text-yellow-500 dark:hidden" />
+            <Moon className="size-[18px] text-primary hidden dark:block" />
             <span className="sr-only">Change theme</span>
           </Button>
         }
