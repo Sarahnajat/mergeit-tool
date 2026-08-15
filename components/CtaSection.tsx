@@ -90,7 +90,7 @@ export function CtaSection() {
                 className="h-12 w-full rounded-xl px-6 text-sm font-bold shadow-sm transition-colors hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 sm:w-auto"
               >
                 <Link
-                  href="#features"
+                  href="/#features"
                   aria-label="Open MergeIt subtitle tools"
                   className="inline-flex flex-row items-center justify-center whitespace-nowrap"
                 >
