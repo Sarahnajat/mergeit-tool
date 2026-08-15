@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { ArrowRightLeft as ConvertIcon, FileText, Download, AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { OptionList } from "@/components/OptionList";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useToolToast } from "@/components/AlertMessage";
 import { convertSubtitle, extensionOf, formatExtension, formatLabel, type SubtitleFormat } from "@/lib/Convert";
@@ -176,38 +176,27 @@ export default function ConvertFilesPanel({ files = [] }: ConvertProps) {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2 text-left">
-                <label className="text-xs font-medium text-muted-foreground block">
-                  Target Format
-                </label>
-                <Select value={targetFormat} onValueChange={(value) => setTargetFormat(value as SubtitleFormat)}>
-                  <SelectTrigger className="h-12 w-full rounded-xl border-border bg-background">
-                    <SelectValue placeholder="Select format" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ass">Advanced SubStation (.ass)</SelectItem>
-                    <SelectItem value="srt">SubRip (.srt)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              <OptionList
+                label="Target Format"
+                name="target-format"
+                value={targetFormat}
+                onChange={setTargetFormat}
+                options={[
+                  { value: "ass", label: "Advanced SubStation (.ass)" },
+                  { value: "srt", label: "SubRip (.srt)" },
+                ]}
+              />
 
-              <div className="space-y-2 text-left">
-                <label className="text-xs font-medium text-muted-foreground block">
-                  Preserve Styling
-                </label>
-                <Select
-                  value={preserveStyling ? "yes" : "no"}
-                  onValueChange={(value) => setPreserveStyling(value === "yes")}
-                >
-                  <SelectTrigger className="h-12 w-full rounded-xl border-border bg-background">
-                    <SelectValue placeholder="Select option" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="yes">Yes (Default)</SelectItem>
-                    <SelectItem value="no">No</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              <OptionList
+                label="Preserve Styling"
+                name="preserve-styling"
+                value={preserveStyling ? "yes" : "no"}
+                onChange={(value) => setPreserveStyling(value === "yes")}
+                options={[
+                  { value: "yes", label: "Yes (Default)" },
+                  { value: "no", label: "No" },
+                ]}
+              />
             </div>
 
             <div className="pt-4 flex flex-col items-center gap-3">

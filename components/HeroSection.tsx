@@ -7,7 +7,7 @@ import {
   TrendingUp,
   SquareChartGantt,
 } from "lucide-react";
-
+import Link from "next/link"
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -143,15 +143,18 @@ export function HeroSection({
               className="flex flex-col gap-4 sm:flex-row"
             >
               {primaryButton && (
-                <Button
-                  size="lg"
-                  onClick={primaryButton.onClick}
-                  className="group inline-flex items-center justify-center rounded-full bg-primary px-8 py-6 text-xs font-bold tracking-wider text-primary-foreground shadow-sm transition-all duration-300 hover:scale-[1.03] hover:bg-primary/90 hover:shadow-lg active:scale-[0.98]"
-                >
-                  {primaryButton.text}
-                  <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                </Button>
-              )}
+  <Button
+    asChild
+    size="lg"
+    onClick={primaryButton.onClick}
+    className="group inline-flex items-center justify-center rounded-full bg-primary px-8 py-6 text-xs font-bold tracking-wider text-primary-foreground shadow-sm transition-all duration-300 hover:scale-[1.03] hover:bg-primary/90 hover:shadow-lg active:scale-[0.98]"
+  >
+    <Link href={primaryButton.href ?? "#"} className="inline-flex items-center">
+      {primaryButton.text}
+      <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+    </Link>
+  </Button>
+)}
 
               {secondaryButton && (
                 <Button

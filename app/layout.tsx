@@ -17,37 +17,67 @@ const geistMono = Geist_Mono({
 const siteUrl = "https://mergeittool.vercel.app";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL("https://mergeittool.vercel.app" ),
+
   title: {
-    default: "MergeIt",
+    default: "MergeIt — SRT & ASS Subtitle Tools",
     template: "%s | MergeIt",
   },
-  description: "Professional subtitle management reimagined.",
+
+  description:
+    "Split, merge, and convert SRT and ASS subtitle files directly in your browser. Fast, private, and easy to use.",
+    keywords: [
+      "MergeIt",
+      "subtitle tools",
+      "SRT",
+      "ASS",
+      "split subtitles",
+      "merge subtitles",
+      "convert subtitles",
+      "subtitle editor",
+      "subtitle converter",
+      "online subtitle tool",
+    ],
+  alternates: {
+    canonical: "https://mergeittool.vercel.app/",
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+  },
+
   icons: {
     icon: "/icon.svg",
   },
+
   openGraph: {
-    title: "MergeIt – Subtitle Management Tool",
-    description: "Split, merge, and convert SRT and ASS subtitle files directly in your browser.",
-    url: siteUrl,
+    type: "website",
+    url: "https://mergeittool.vercel.app/",
     siteName: "MergeIt",
+    locale: "en_US",
+    title: "MergeIt — SRT & ASS Subtitle Tools",
+    description:
+      "Split, merge, and convert SRT and ASS subtitle files directly in your browser.",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "MergeIt preview",
+        alt: "MergeIt subtitle tools",
       },
     ],
-    type: "website",
   },
+
   twitter: {
     card: "summary_large_image",
-    title: "MergeIt",
-    description: "Professional subtitle management, reimagined for speed and accuracy—convert, split, and merge files seamlessly in your browser.",
+    title: "MergeIt — SRT & ASS Subtitle Tools",
+    description:
+      "Split, merge, and convert SRT and ASS subtitle files directly in your browser.",
     images: ["/og-image.png"],
   },
 };
+
 
 export default function RootLayout({
   children,

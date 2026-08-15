@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { SplitSquareHorizontal, Merge, ArrowRightLeft, SquareStack } from "lucide-react";
 import { FileDropzone } from "./FileDropzone";
@@ -12,7 +12,26 @@ import ConvertFilesPanel from "./features/ConvertFilesPanel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {Badge} from "@/components/ui/badge"
+import Link from "next/link";
+import { ArrowRight, FootprintsIcon } from "lucide-react";
 type ToolId = "split" | "merge" | "Convert";
+
+function hashToTool(hash: string): ToolId | null {
+  switch (hash.replace("#", "").toLowerCase()) {
+    case "split":
+      return "split";
+    case "merge":
+      return "merge";
+    case "convert":
+      return "Convert";
+    default:
+      return null;
+  }
+}
+
+function toolToHash(id: ToolId): string {
+  return `#${id.toLowerCase()}`;
+}
 
 const tools: {
   id: ToolId;
@@ -56,13 +75,45 @@ export const FeaturesSection = () => {
   const [activeTool, setActiveTool] = useState<ToolId | null>(null);
   const [files, setFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const toolButtonRefs = useRef<Partial<Record<ToolId, HTMLButtonElement>>>({});
 
   const active = tools.find((t) => t.id === activeTool);
 
-  const handleCardClick = (id: ToolId) => {
-    setActiveTool((prev) => (prev === id ? null : id));
+  const selectTool = (id: ToolId) => {
+    setActiveTool(id);
     setFiles([]);
+    window.history.replaceState(null, "", toolToHash(id));
+    requestAnimationFrame(() => toolButtonRefs.current[id]?.focus());
   };
+
+  useEffect(() => {
+    const syncFromHash = () => {
+      const tool = hashToTool(window.location.hash);
+      if (tool) {
+        setActiveTool(tool);
+        requestAnimationFrame(() => toolButtonRefs.current[tool]?.focus());
+      }
+    };
+
+    syncFromHash();
+    window.addEventListener("hashchange", syncFromHash);
+    return () => window.removeEventListener("hashchange", syncFromHash);
+  }, []);
+
+  useEffect(() => {
+    const handleSelectTool = (event: Event) => {
+      const detail = (event as CustomEvent<"split" | "merge" | "convert">).detail;
+      const toolMap = { split: "split", merge: "merge", convert: "Convert" } as const;
+      const tool = toolMap[detail];
+      if (!tool) return;
+
+      selectTool(tool);
+      document.getElementById("features")?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    window.addEventListener("mergeit:select-tool", handleSelectTool);
+    return () => window.removeEventListener("mergeit:select-tool", handleSelectTool);
+  }, []);
 
   const handleBoxClick = () => {
     fileInputRef.current?.click();
@@ -128,99 +179,167 @@ export const FeaturesSection = () => {
           </p>
         </MotionDiv>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-          {tools.map((card, index) => (
-            <MotionDiv
-              key={card.id}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: index * 0.1 }}
-            >
-              <Card
-                onClick={() => handleCardClick(card.id)}
-                className={cn(
-                  "group relative text-left rounded-3xl cursor-pointer overflow-hidden transition-all duration-300 border",
-                  activeTool === card.id
-                    ? "border-primary ring-2 ring-primary/30 shadow-lg"
-                    : "border-border hover:border-primary/40 hover:shadow-md",
-                )}
-              >
-                <div
-                  className={cn(
-                    "absolute inset-0 bg-gradient-to-br to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none",
-                    card.color,
-                  )}
-                />
-                <CardContent className="relative z-10 p-8 sm:p-10 lg:p-12 space-y-12 sm:space-y-16">
-                  <div className="size-12 sm:size-14 rounded-2xl bg-accent flex items-center justify-center shrink-0">
-                    <card.icon className="size-5 sm:size-6 text-accent-foreground" />
-                  </div>
-                  <div className="space-y-2 sm:space-y-3">
-                    <span className="text-[10px] font-mono text-muted-foreground tracking-[0.3em] block">
-                      {card.label}
-                    </span>
-                    <h3 className="text-2xl sm:text-3xl font-black text-card-foreground  tracking-tighter">
-                      {card.title}
-                    </h3>
-                  </div>
-                </CardContent>
-              </Card>
-            </MotionDiv>
-          ))}
-        </div>
-
-        {/*  Active Dropzone Slide-in Animation */}
-        {active && (
-          <MotionDiv
-            key={activeTool}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="space-y-8"
-          >
-            {files.length === 0 ? (
-              <FileDropzone
-                fileInputRef={fileInputRef}
-                handleBoxClick={handleBoxClick}
-                handleDragOver={handleDragOver}
-                handleDrop={handleDrop}
-                handleFileSelect={handleFileSelect}
-                label={active.dropzoneLabel}
-                multiple={active.multiple}
-              />
-            ) : (
+        {!activeTool ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            {tools.map((card, index) => (
               <MotionDiv
+                key={card.id}
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="max-w-2xl mx-auto space-y-6"
+                transition={{ duration: 0.4, delay: index * 0.1 }}
               >
-                <UploadedFileList files={files} onRemove={handleRemoveFile} />
-
-                {activeTool === "split" && <SplitFilesPanel files={files} />}
-                {activeTool === "merge" && (
-                  <MergeFilesPanel
-                    files={files}
-                    onAddFiles={handleFileSelect}
+                <Card
+                  id={card.id.toLowerCase()}
+                  onClick={() => selectTool(card.id)}
+                  className={cn(
+                    "scroll-mt-24",
+                    "group relative text-left rounded-3xl cursor-pointer overflow-hidden transition-all duration-300 border border-border hover:border-primary/40 hover:shadow-md focus-within:ring-2 focus-within:ring-primary/30",
+                  )}
+                >
+                  <div
+                    className={cn(
+                      "absolute inset-0 bg-gradient-to-br to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none",
+                      card.color,
+                    )}
                   />
-                )}
-                {activeTool === "Convert" && (
-                  <ConvertFilesPanel files={files} />
-                )}
-
-                <div className="mt-4 flex justify-center">
-                  <Button
-                    variant="link"
-                    size="sm"
-                    onClick={() => setFiles([])}
-                    className="text-xs text-muted-foreground hover:text-foreground font-mono tracking-wider"
-                  >
-                    Upload different files?
-                  </Button>
-                </div>
+                  <CardContent className="relative z-10 p-8 sm:p-10 lg:p-12 space-y-6">
+                    <div className="space-y-2 sm:space-y-3">
+                      <h3 className="text-2xl sm:text-3xl font-black text-card-foreground tracking-tighter">
+                        {card.title}
+                      </h3>
+                      <p className="text-sm sm:text-base font-bold text-muted-foreground">
+                        {card.label}
+                      </p>
+                    </div>
+                    <div className="size-12 sm:size-14 rounded-2xl bg-accent flex items-center justify-center shrink-0">
+                      <card.icon className="size-5 sm:size-6 text-accent-foreground" />
+                    </div>
+                  </CardContent>
+                </Card>
               </MotionDiv>
-            )}
-          </MotionDiv>
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-8">
+            <div
+              role="tablist"
+              aria-label="Subtitle tools"
+              className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4"
+            >
+              {tools.map((tool) => {
+                const selected = activeTool === tool.id;
+
+                return (
+                  <button
+                    key={tool.id}
+                    ref={(node) => {
+                      toolButtonRefs.current[tool.id] = node;
+                    }}
+                    type="button"
+                    role="tab"
+                    id={`tool-tab-${tool.id.toLowerCase()}`}
+                    aria-selected={selected}
+                    aria-controls={`tool-panel-${tool.id.toLowerCase()}`}
+                    onClick={() => selectTool(tool.id)}
+                    className={cn(
+                      "rounded-2xl border p-4 sm:p-5 text-left transition-all outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                      selected
+                        ? "border-primary bg-primary/10 shadow-md ring-2 ring-primary/30"
+                        : "border-border bg-card hover:border-primary/40 hover:bg-muted/40",
+                    )}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={cn(
+                          "size-10 rounded-xl flex items-center justify-center shrink-0",
+                          selected ? "bg-primary text-primary-foreground" : "bg-accent text-accent-foreground",
+                        )}
+                      >
+                        <tool.icon className="size-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-base font-black tracking-tight text-foreground">
+                          {tool.title}
+                        </p>
+                        <p className="text-xs font-bold text-muted-foreground truncate">
+                          {tool.label}
+                        </p>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            <MotionDiv
+              key={activeTool}
+              id={`tool-panel-${activeTool.toLowerCase()}`}
+              role="tabpanel"
+              aria-labelledby={`tool-tab-${activeTool.toLowerCase()}`}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              className="space-y-8"
+            >
+              {files.length === 0 ? (
+                <FileDropzone
+                  fileInputRef={fileInputRef}
+                  handleBoxClick={handleBoxClick}
+                  handleDragOver={handleDragOver}
+                  handleDrop={handleDrop}
+                  handleFileSelect={handleFileSelect}
+                  label={active!.dropzoneLabel}
+                  multiple={active!.multiple}
+                />
+              ) : (
+                <MotionDiv
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="max-w-2xl mx-auto space-y-6"
+                >
+                  <UploadedFileList files={files} onRemove={handleRemoveFile} />
+
+                  {activeTool === "split" && <SplitFilesPanel files={files} />}
+                  {activeTool === "merge" && (
+                    <MergeFilesPanel
+                      files={files}
+                      onAddFiles={handleFileSelect}
+                    />
+                  )}
+                  {activeTool === "Convert" && (
+                    <ConvertFilesPanel files={files} />
+                  )}
+
+                  <div className="mt-4 flex justify-center">
+                    <Button
+                      variant="link"
+                      size="sm"
+                      onClick={() => setFiles([])}
+                      className="text-xs text-muted-foreground hover:text-foreground font-mono tracking-wider"
+                    >
+                      Upload different files?
+                    </Button>
+                  </div>
+                </MotionDiv>
+              )}
+            </MotionDiv>
+          </div>
         )}
+
+        <div className="flex justify-center pt-4">
+          <Button
+            asChild
+            variant="outline"
+            size="lg"
+            className="rounded-full border-border px-6 py-5 text-xs font-bold tracking-wider"
+          >
+            <Link href="/how-it-works" className="inline-flex items-center gap-2">
+              <FootprintsIcon className="size-4" />
+              How It Works
+              <ArrowRight className="size-4" />
+            </Link>
+          </Button>
+        </div>
       </div>
     </section>
   );

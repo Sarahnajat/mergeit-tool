@@ -192,7 +192,7 @@ export default function AboutPage() {
                     className="h-12 cursor-pointer rounded-full px-6 py-3 text-xs font-bold tracking-wider transition-colors duration-200 sm:text-sm"
                   >
                     <Link
-                      href="/#usage-guide"
+                      href="/how-it-works"
                       aria-label="See how it works"
                       className="inline-flex items-center"
                     >

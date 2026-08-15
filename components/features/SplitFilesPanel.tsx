@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { AlertCircle, CheckCircle2, Download, Loader2, SplitSquareHorizontal } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { OptionList } from "@/components/OptionList";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +18,11 @@ const splitMethodLabels: Record<SplitMethod, string> = {
   lines: "By number of lines",
   files: "By number of files",
 };
+
+const splitMethodOptions = (Object.keys(splitMethodLabels) as SplitMethod[]).map((key) => ({
+  value: key,
+  label: splitMethodLabels[key],
+}));
 
 export default function SplitFilesPanel({ files = [] }: SplitFilesProps) {
   const { showToast } = useToolToast();
@@ -85,23 +90,13 @@ export default function SplitFilesPanel({ files = [] }: SplitFilesProps) {
 
         <CardContent className="p-6 sm:p-8 pt-0 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2 text-left">
-              <label className="text-[10px] font-mono font-bold tracking-[0.25em] text-muted-foreground block">
-                Split Method
-              </label>
-              <Select value={method} onValueChange={(next) => setMethod(next as SplitMethod)}>
-                <SelectTrigger className="h-12 w-full rounded-xl border border-border bg-background">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {(Object.keys(splitMethodLabels) as SplitMethod[]).map((key) => (
-                    <SelectItem key={key} value={key}>
-                      {splitMethodLabels[key]}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <OptionList
+              label="Split Method"
+              name="split-method"
+              value={method}
+              onChange={setMethod}
+              options={splitMethodOptions}
+            />
 
             <div className="space-y-2 text-left">
               <label className="text-[10px] font-mono font-bold tracking-[0.25em] text-muted-foreground block">

@@ -5,18 +5,11 @@ import { RadialNav, type RadialNavItem } from "@/components/animated/RadialNav"
 import {
   AlignLeft,
   ArrowRightLeft,
-  ChevronDown,
   Merge,
   ScanEye,
   SplitSquareHorizontal,
 } from "lucide-react"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import { OptionList } from "@/components/OptionList"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { MotionDiv } from "@/lib/motion"
@@ -55,7 +48,7 @@ export default function PreviewSection() {
 
   return (
     <section
-      id="preview"
+      id="demo"
       className="relative w-full overflow-hidden bg-background px-4 py-16 font-dmSans sm:px-6 sm:py-24 lg:px-8 lg:py-32"
     >
       <div className="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(45deg,var(--border)_0px_1px,transparent_1px_8px)] opacity-20 [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_110%)]" />
@@ -72,15 +65,15 @@ export default function PreviewSection() {
             className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3.5 py-1 font-mono text-xs font-bold tracking-widest text-primary"
           >
             <ScanEye className="size-4" aria-hidden="true" />
-            Discover What MergeIt Can Do
+            Demo
           </Badge>
 
           <h2 className="text-3xl font-black leading-tight tracking-tight text-foreground sm:text-4xl md:text-5xl lg:text-6xl">
-            Split, <span className="text-primary">merge</span>, or convert.
+          Check it out first, then <span className="text-primary">upload</span>.
           </h2>
 
           <p className="text-muted-foreground text-sm sm:text-base max-w-lg font-medium leading-relaxed">
-          See a preview of MergeIt in action — split, merge, or convert subtitle files. This preview shows how MergeIt works with your files: splitting them into parts, merging multiple into one, or converting formats while keeping timing intact.
+            Browse each tool and jump straight into the toolkit when you are ready to use your own files.
           </p>
         </MotionDiv>
 
@@ -120,6 +113,8 @@ export default function PreviewSection() {
 }
 
 function SplitPanel({ onOpenFeature }: { onOpenFeature: () => void }) {
+  const [method, setMethod] = React.useState<"duration" | "lines" | "files">("duration")
+
   return (
     <div className="space-y-4">
       <div className="flex flex-col items-start justify-between gap-2 px-2 font-mono text-xs tracking-wider text-muted-foreground sm:flex-row sm:items-center">
@@ -136,26 +131,32 @@ function SplitPanel({ onOpenFeature }: { onOpenFeature: () => void }) {
 
         <CardContent className="space-y-6 px-4 py-6">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <label className="text-xs font-medium text-muted-foreground">
-                Split Method
-              </label>
-              <div className="flex items-center justify-between rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground">
-                <span>By Time Duration</span>
-                <ChevronDown className="size-5 text-muted-foreground" aria-hidden="true" />
-              </div>
-            </div>
+            <OptionList
+              label="Split Method"
+              name="demo-split-method"
+              value={method}
+              onChange={setMethod}
+              options={[
+                { value: "duration", label: "By Time Duration" },
+                { value: "lines", label: "By Number of Lines" },
+                { value: "files", label: "By Number of Files" },
+              ]}
+            />
 
             <div className="space-y-2">
-              <label className="text-xs font-medium text-muted-foreground">
-                Duration per File (minutes)
+              <label className="text-[10px] font-mono font-bold tracking-[0.25em] text-muted-foreground block">
+                {method === "duration"
+                  ? "Duration per File (minutes)"
+                  : method === "lines"
+                    ? "Lines per File"
+                    : "Number of Files"}
               </label>
               <input
                 type="number"
-                defaultValue={10}
+                defaultValue={method === "duration" ? 10 : method === "lines" ? 100 : 2}
                 min={1}
                 className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-primary/40"
-                aria-label="Duration per file in minutes"
+                aria-label="Split value"
               />
             </div>
           </div>
@@ -167,7 +168,7 @@ function SplitPanel({ onOpenFeature }: { onOpenFeature: () => void }) {
               className="flex rounded-xl bg-primary px-6 py-3 text-white shadow-md transition-colors hover:bg-primary/90"
             >
               <SplitSquareHorizontal className="mr-2 size-5" aria-hidden="true" />
-              Split Files
+              Open Split Tool
             </button>
           </div>
         </CardContent>
@@ -210,7 +211,7 @@ function MergePanel({ onOpenFeature }: { onOpenFeature: () => void }) {
               className="flex rounded-xl bg-primary px-6 py-3 text-white shadow-md transition-colors hover:bg-primary/90"
             >
               <Merge className="mr-2 size-5" aria-hidden="true" />
-              Merge Files
+              Open Merge Tool
             </button>
           </div>
         </CardContent>
@@ -220,6 +221,9 @@ function MergePanel({ onOpenFeature }: { onOpenFeature: () => void }) {
 }
 
 function ConvertPanel({ onOpenFeature }: { onOpenFeature: () => void }) {
+  const [targetFormat, setTargetFormat] = React.useState<"ass" | "srt">("ass")
+  const [preserveStyling, setPreserveStyling] = React.useState<"yes" | "no">("yes")
+
   return (
     <div className="space-y-4">
       <div className="flex flex-col items-start justify-between gap-2 px-2 font-mono text-xs tracking-wider text-muted-foreground sm:flex-row sm:items-center">
@@ -236,35 +240,27 @@ function ConvertPanel({ onOpenFeature }: { onOpenFeature: () => void }) {
 
         <CardContent className="space-y-6 px-4 py-6">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <label className="text-xs font-medium text-muted-foreground">
-                Target Format
-              </label>
-              <Select defaultValue="ass">
-                <SelectTrigger className="w-full rounded-xl">
-                  <SelectValue placeholder="Select format" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ass">Advanced SubStation (.ass)</SelectItem>
-                  <SelectItem value="srt">SubRip (.srt)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            <OptionList
+              label="Target Format"
+              name="demo-target-format"
+              value={targetFormat}
+              onChange={setTargetFormat}
+              options={[
+                { value: "ass", label: "Advanced SubStation (.ass)" },
+                { value: "srt", label: "SubRip (.srt)" },
+              ]}
+            />
 
-            <div className="space-y-2">
-              <label className="text-xs font-medium text-muted-foreground">
-                Preserve Styling
-              </label>
-              <Select defaultValue="yes">
-                <SelectTrigger className="w-full rounded-xl">
-                  <SelectValue placeholder="Select option" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="yes">Yes (Default)</SelectItem>
-                  <SelectItem value="no">No</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            <OptionList
+              label="Preserve Styling"
+              name="demo-preserve-styling"
+              value={preserveStyling}
+              onChange={setPreserveStyling}
+              options={[
+                { value: "yes", label: "Yes (Default)" },
+                { value: "no", label: "No" },
+              ]}
+            />
           </div>
 
           <div className="flex justify-center">
@@ -274,7 +270,7 @@ function ConvertPanel({ onOpenFeature }: { onOpenFeature: () => void }) {
               className="flex rounded-xl bg-primary px-6 py-3 text-white shadow-md transition-colors hover:bg-primary/90"
             >
               <ArrowRightLeft className="mr-2 size-5" aria-hidden="true" />
-              Convert
+              Open Convert Tool
             </button>
           </div>
         </CardContent>

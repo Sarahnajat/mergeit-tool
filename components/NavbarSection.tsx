@@ -30,9 +30,10 @@ type NavigationSection = {
 
 const navigationData: NavigationSection[] = [
   { title: "About", href: "/about" },
-  { title: "Usage Guide", href: "/#usage-guide" },
-  { title: "Features", href: "/#features" },
-  { title: "Preview", href: "/#preview" },
+  { title: "Split", href: "/#split" },
+  { title: "Merge", href: "/#merge" },
+  { title: "Convert", href: "/#convert" },
+  
 ]
 
 const githubUrl = "https://github.com/sarahnajat/mergeit"
@@ -97,9 +98,16 @@ function MobileNavigation({ onClose }: { onClose: () => void }) {
   )
 }
 
+const toolNavItems = ["Split", "Merge", "Convert"] as const
+
+function isToolNavActive(title: string, hash: string) {
+  return hash.replace("#", "").toLowerCase() === title.toLowerCase()
+}
+
 export default function NavbarSection() {
   const [sticky, setSticky] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
+  const [activeHash, setActiveHash] = useState("")
 
   const handleScroll = useCallback(() => {
     setSticky(window.scrollY >= 50)
@@ -109,6 +117,14 @@ export default function NavbarSection() {
     if (window.innerWidth >= 1024) {
       setIsOpen(false)
     }
+  }, [])
+
+  useEffect(() => {
+    const syncHash = () => setActiveHash(window.location.hash)
+
+    syncHash()
+    window.addEventListener("hashchange", syncHash)
+    return () => window.removeEventListener("hashchange", syncHash)
   }, [])
 
   useEffect(() => {
@@ -136,14 +152,14 @@ export default function NavbarSection() {
         >
           <Link
             href="/"
-            className="inline-flex items-center gap-2"
+            className="inline-flex items-center gap-1"
             aria-label="MergeIt home"
           >
             <Image
               src="/icon.svg"
               alt="MergeIt logo"
-              width={40}
-              height={40}
+              width={25}
+              height={25}
               className="shrink-0"
               priority
             />
@@ -154,16 +170,28 @@ export default function NavbarSection() {
 
           <NavigationMenu className="hidden rounded-full bg-muted p-0.5 lg:flex">
             <NavigationMenuList className="flex items-center gap-0">
-              {navigationData.map((item) => (
-                <NavigationMenuItem key={item.title}>
-                  <NavigationMenuLink
-                    href={item.href}
-                    className="rounded-full px-2 py-2 text-sm font-medium tracking-normal text-muted-foreground outline-transparent transition hover:bg-background hover:text-primary hover:outline-border hover:shadow-xs lg:px-4"
-                  >
-                    {item.title}
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-              ))}
+              {navigationData.map((item) => {
+                const isActive =
+                  toolNavItems.includes(item.title as (typeof toolNavItems)[number]) &&
+                  isToolNavActive(item.title, activeHash)
+
+                return (
+                  <NavigationMenuItem key={item.title}>
+                    <NavigationMenuLink
+                      href={item.href}
+                      aria-current={isActive ? "page" : undefined}
+                      className={cn(
+                        "rounded-full px-2 py-2 text-sm font-medium tracking-normal outline-transparent transition lg:px-4 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                        isActive
+  ? "bg-background text-primary shadow-xs ring-2 ring-primary/30"
+  : "text-muted-foreground hover:bg-background/60 hover:text-foreground",
+                      )}
+                    >
+                      {item.title}
+                    </NavigationMenuLink>
+                  </NavigationMenuItem>
+                )
+              })}
               <NavigationMenuItem>
                 <ThemeToggle className="ms-1" />
               </NavigationMenuItem>
