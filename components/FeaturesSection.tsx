@@ -75,7 +75,9 @@ export const FeaturesSection = () => {
   const [activeTool, setActiveTool] = useState<ToolId | null>(null);
   const [files, setFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const toolButtonRefs = useRef<Partial<Record<ToolId, HTMLButtonElement>>>({});
+  const toolButtonRefs = useRef<
+  Partial<Record<ToolId, HTMLButtonElement | null>>
+>({});
 
   const active = tools.find((t) => t.id === activeTool);
 
