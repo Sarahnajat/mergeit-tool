@@ -14,7 +14,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import {Badge} from "@/components/ui/badge"
 import Link from "next/link";
 import { ArrowRight, FootprintsIcon } from "lucide-react";
-type ToolId = "split" | "merge" | "Convert";
+type ToolId = "split" | "merge" | "convert";
 
 function hashToTool(hash: string): ToolId | null {
   switch (hash.replace("#", "").toLowerCase()) {
@@ -23,7 +23,7 @@ function hashToTool(hash: string): ToolId | null {
     case "merge":
       return "merge";
     case "convert":
-      return "Convert";
+      return "convert";
     default:
       return null;
   }
@@ -61,7 +61,7 @@ const tools: {
     multiple: true,
   },
   {
-    id: "Convert",
+    id: "convert",
     title: "Convert",
     label: "ASS ↔ SRT Converter",
     color: "from-chart-1/20",
@@ -105,7 +105,7 @@ export const FeaturesSection = () => {
   useEffect(() => {
     const handleSelectTool = (event: Event) => {
       const detail = (event as CustomEvent<"split" | "merge" | "convert">).detail;
-      const toolMap = { split: "split", merge: "merge", convert: "Convert" } as const;
+      const toolMap = { split: "split", merge: "merge", convert: "convert" } as const;
       const tool = toolMap[detail];
       if (!tool) return;
 
@@ -308,7 +308,7 @@ export const FeaturesSection = () => {
                       onAddFiles={handleFileSelect}
                     />
                   )}
-                  {activeTool === "Convert" && (
+                  {activeTool === "convert" && (
                     <ConvertFilesPanel files={files} />
                   )}
 

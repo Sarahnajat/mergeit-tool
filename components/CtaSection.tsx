@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { FileText, FilePenLine, GlobeLock } from "lucide-react"
+import Link from "next/link";
+import { FileText, FilePenLine, GlobeLock } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { MotionDiv } from "@/lib/motion"
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { MotionDiv } from "@/lib/motion";
 
 export function CtaSection() {
   return (
@@ -28,7 +28,7 @@ export function CtaSection() {
           >
             <Badge
               variant="secondary"
-              className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3.5 py-1 text-[11px] font-semibold tracking-[0.18em] text-primary"
+              className="mb-4 inline-flex flex-row items-center gap-1.5 whitespace-nowrap rounded-full border border-primary/20 bg-primary/10 px-3.5 py-1 text-[11px] font-semibold tracking-[0.18em] text-primary"
             >
               <FilePenLine className="size-3.5" aria-hidden="true" />
               GET STARTED
@@ -64,7 +64,7 @@ export function CtaSection() {
           >
             <Badge
               variant="secondary"
-              className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-xs font-semibold text-primary"
+              className="mb-5 inline-flex flex-row items-center gap-2 whitespace-nowrap rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-xs font-semibold text-primary"
             >
               <GlobeLock className="size-3.5" aria-hidden="true" />
               100% free · no sign-up
@@ -89,7 +89,11 @@ export function CtaSection() {
                 size="lg"
                 className="h-12 w-full rounded-xl px-6 text-sm font-bold shadow-sm transition-colors hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 sm:w-auto"
               >
-                <Link href="#features" aria-label="Open MergeIt subtitle tools">
+                <Link
+                  href="#features"
+                  aria-label="Open MergeIt subtitle tools"
+                  className="inline-flex flex-row items-center justify-center whitespace-nowrap"
+                >
                   <FileText className="mr-2 size-4" aria-hidden="true" />
                   Open subtitle tools
                 </Link>
@@ -99,7 +103,7 @@ export function CtaSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
-export default CtaSection
+export default CtaSection;
