@@ -26,7 +26,16 @@ interface AssDocument {
 type ParsedDocument = AssDocument
 
 const DEFAULT_ASS_FORMAT_FIELDS = [
-  'layer', 'start', 'end', 'style', 'name', 'marginl', 'marginr', 'marginv', 'effect', 'text',
+  'layer',
+  'start',
+  'end',
+  'style',
+  'name',
+  'marginl',
+  'marginr',
+  'marginv',
+  'effect',
+  'text',
 ]
 
 function getFormat(name: string): SubtitleFormat | null {
@@ -38,18 +47,27 @@ function pad(value: number, length = 2): string {
   return String(value).padStart(length, '0')
 }
 
-function srtTimeToMs(value: string): number {
-  const normalized = value
+function normalizeTimestamp(value: string): string {
+  return value
     .replace(/^\uFEFF/, '')
+    .replace(/[，﹐]/g, ',')
+    .replace(/[：]/g, ':')
+    .replace(/\u00A0/g, ' ')
     .trim()
     .replace(/\s+/g, '')
+}
+
+function srtTimeToMs(value: string): number {
+  const normalized = normalizeTimestamp(value)
 
   const match = normalized.match(
-    /^(\d+):([0-5]?\d):([0-5]?\d)[,.](\d{1,3})$/
+    /^(\d+):([0-5]?\d):([0-5]?\d)[,.](\d{1,3})$/,
   )
 
   if (!match) {
-    throw new Error(`Invalid SRT timestamp: ${value.trim()}`)
+    throw new Error(
+      `Invalid SRT timestamp: ${JSON.stringify(value.trim())}`,
+    )
   }
 
   const hours = Number(match[1])
@@ -57,9 +75,10 @@ function srtTimeToMs(value: string): number {
   const seconds = Number(match[3])
   const milliseconds = Number(match[4].padEnd(3, '0'))
 
-  return ((hours * 3600 + minutes * 60 + seconds) * 1000) + milliseconds
+  return (
+    (hours * 3600 + minutes * 60 + seconds) * 1000 + milliseconds
+  )
 }
-
 
 function assFractionToMs(fraction: string): number {
   const normalized = fraction.padEnd(2, '0').slice(0, 2)
@@ -67,11 +86,17 @@ function assFractionToMs(fraction: string): number {
 }
 
 function assTimeToMs(value: string): number {
-  const match = value.trim().match(/^(\d+):(\d{1,2}):(\d{1,2})[\.:](\d{1,2})$/)
-  if (!match) throw new Error(`Invalid ASS timestamp: ${value}`)
+  const match = value
+    .trim()
+    .match(/^(\d+):(\d{1,2}):(\d{1,2})[.:](\d{1,2})$/)
+
+  if (!match) {
+    throw new Error(`Invalid ASS timestamp: ${JSON.stringify(value)}`)
+  }
 
   return (
-    (Number(match[1]) * 3600 + Number(match[2]) * 60 + Number(match[3])) * 1000 +
+    (Number(match[1]) * 3600 + Number(match[2]) * 60 + Number(match[3])) *
+      1000 +
     assFractionToMs(match[4])
   )
 }
@@ -98,19 +123,46 @@ function msToAssTime(ms: number): string {
 
 function parseSrt(source: string): Caption[] {
   const cleanSource = source.replace(/^\uFEFF/, '').trim()
-  if (!cleanSource) return []
+
+  if (!cleanSource) {
+    return []
+  }
 
   return cleanSource
     .split(/\r?\n\s*\r?\n/)
-    .map((block) => {
+    .map((block, blockIndex) => {
       const lines = block.split(/\r?\n/)
       const timeLineIndex = lines.findIndex((line) => line.includes('-->'))
-      if (timeLineIndex < 0) return null
 
-      const [start, end] = lines[timeLineIndex].split('-->')
+      if (timeLineIndex < 0) {
+        return null
+      }
+
+      const timestampLine = lines[timeLineIndex]
+        .replace(/\uFEFF/g, '')
+        .trim()
+
+      const timestampParts = timestampLine.split(/\s*-->\s*/)
+
+      if (timestampParts.length !== 2) {
+        throw new Error(
+          `Invalid SRT timestamp line at subtitle block ${blockIndex + 1}: ${JSON.stringify(timestampLine)}`,
+        )
+      }
+
+      const [start, end] = timestampParts
+      const startMs = srtTimeToMs(start)
+      const endMs = srtTimeToMs(end)
+
+      if (endMs < startMs) {
+        throw new Error(
+          `SRT subtitle block ${blockIndex + 1} ends before it starts.`,
+        )
+      }
+
       return {
-        start: srtTimeToMs(start),
-        end: srtTimeToMs(end),
+        start: startMs,
+        end: endMs,
         text: lines.slice(timeLineIndex + 1).join('\n'),
       }
     })
@@ -123,7 +175,10 @@ function splitAssFields(value: string, fieldCount: number): string[] | null {
 
   for (let index = 0; index < fieldCount - 1; index += 1) {
     const commaIndex = remaining.indexOf(',')
-    if (commaIndex < 0) return null
+
+    if (commaIndex < 0) {
+      return null
+    }
 
     fields.push(remaining.slice(0, commaIndex))
     remaining = remaining.slice(commaIndex + 1)
@@ -131,23 +186,6 @@ function splitAssFields(value: string, fieldCount: number): string[] | null {
 
   fields.push(remaining)
   return fields
-}
-
-function parseAssFormatFields(header: string): string[] {
-  const lines = header.split(/\r?\n/)
-  const eventsIndex = lines.findIndex((line) => /^\[Events\]\s*$/i.test(line.trim()))
-  if (eventsIndex < 0) return DEFAULT_ASS_FORMAT_FIELDS
-
-  const formatLine = lines.find(
-    (line, index) => index > eventsIndex && /^Format\s*:/i.test(line),
-  )
-
-  return formatLine
-    ? formatLine
-        .slice(formatLine.indexOf(':') + 1)
-        .split(',')
-        .map((field) => field.trim().toLowerCase())
-    : DEFAULT_ASS_FORMAT_FIELDS
 }
 
 function convertSrtTextToAss(text: string): string {
@@ -180,8 +218,13 @@ function normalizeCaptionText(
   sourceFormat: SubtitleFormat,
   targetFormat: SubtitleFormat,
 ): string {
-  if (sourceFormat === targetFormat) return text
-  return targetFormat === 'ass' ? convertSrtTextToAss(text) : convertAssTextToSrt(text)
+  if (sourceFormat === targetFormat) {
+    return text
+  }
+
+  return targetFormat === 'ass'
+    ? convertSrtTextToAss(text)
+    : convertAssTextToSrt(text)
 }
 
 function parseSrtDocument(source: string): ParsedDocument {
@@ -194,7 +237,9 @@ function parseSrtDocument(source: string): ParsedDocument {
 
 function parseAss(source: string): ParsedDocument {
   const lines = source.replace(/^\uFEFF/, '').split(/\r?\n/)
-  const eventsIndex = lines.findIndex((line) => /^\[Events\]\s*$/i.test(line.trim()))
+  const eventsIndex = lines.findIndex((line) =>
+    /^\[Events\]\s*$/i.test(line.trim()),
+  )
 
   if (eventsIndex < 0) {
     throw new Error('ASS file has no [Events] section.')
@@ -227,23 +272,39 @@ function parseAss(source: string): ParsedDocument {
       fields.length,
     )
 
-    if (!values) continue
+    if (!values) {
+      continue
+    }
+
+    const start = assTimeToMs(values[startIndex])
+    const end = assTimeToMs(values[endIndex])
+
+    if (end < start) {
+      throw new Error('ASS subtitle ends before it starts.')
+    }
 
     captions.push({
-      start: assTimeToMs(values[startIndex]),
-      end: assTimeToMs(values[endIndex]),
+      start,
+      end,
       text: values[textIndex],
       dialogueValues: values,
     })
   }
 
-  const firstDialogueIndex = lines.findIndex((line) => /^Dialogue\s*:/i.test(line))
+  const firstDialogueIndex = lines.findIndex((line) =>
+    /^Dialogue\s*:/i.test(line),
+  )
+
   const header = lines
     .slice(0, firstDialogueIndex < 0 ? lines.length : firstDialogueIndex)
     .join('\r\n')
     .replace(/\r?\n*$/, '')
 
-  return { captions, header, formatFields: fields }
+  return {
+    captions,
+    header,
+    formatFields: fields,
+  }
 }
 
 function defaultAssHeader(): string {
@@ -269,17 +330,29 @@ function buildSrt(captions: Caption[]): string {
   )
 }
 
-function buildAss(header: string, formatFields: string[], captions: AssCaption[]): string {
+function buildAss(
+  header: string,
+  formatFields: string[],
+  captions: AssCaption[],
+): string {
   const startIndex = formatFields.indexOf('start')
   const endIndex = formatFields.indexOf('end')
   const textIndex = formatFields.indexOf('text')
 
   const events = captions.map((caption) => {
-    if (caption.dialogueValues && startIndex >= 0 && endIndex >= 0) {
+    if (
+      caption.dialogueValues &&
+      startIndex >= 0 &&
+      endIndex >= 0
+    ) {
       const values = [...caption.dialogueValues]
       values[startIndex] = msToAssTime(caption.start)
       values[endIndex] = msToAssTime(caption.end)
-      if (textIndex >= 0) values[textIndex] = caption.text
+
+      if (textIndex >= 0) {
+        values[textIndex] = caption.text
+      }
+
       return `Dialogue: ${values.join(',')}`
     }
 
@@ -296,17 +369,26 @@ export async function mergeSubtitles(
 ): Promise<MergeResult> {
   try {
     if (files.length < 2) {
-      return { success: false, error: 'Select at least two subtitle files to merge.' }
+      return {
+        success: false,
+        error: 'Select at least two subtitle files to merge.',
+      }
     }
 
     if (!Number.isFinite(gapMs) || gapMs < 0) {
-      return { success: false, error: 'The gap must be zero or greater.' }
+      return {
+        success: false,
+        error: 'The gap must be zero or greater.',
+      }
     }
 
     const inputFormats = files.map((file) => getFormat(file.name))
 
     if (inputFormats.some((format) => format === null)) {
-      return { success: false, error: 'Only .srt and .ass files are supported.' }
+      return {
+        success: false,
+        error: 'Only .srt and .ass files are supported.',
+      }
     }
 
     const targetFormat = outputFormat ?? inputFormats[0]!
@@ -314,10 +396,7 @@ export async function mergeSubtitles(
 
     const documents: ParsedDocument[] = sources.map((source, index) => {
       const format = inputFormats[index]!
-
-      return format === 'ass'
-        ? parseAss(source)
-        : parseSrtDocument(source)
+      return format === 'ass' ? parseAss(source) : parseSrtDocument(source)
     })
 
     const allCaptions: AssCaption[] = []
@@ -330,10 +409,15 @@ export async function mergeSubtitles(
         allCaptions.push({
           start: caption.start + offset,
           end: caption.end + offset,
-          text: normalizeCaptionText(caption.text, sourceFormat, targetFormat),
-          dialogueValues: sourceFormat === 'ass' && targetFormat === 'ass'
-            ? caption.dialogueValues
-            : undefined,
+          text: normalizeCaptionText(
+            caption.text,
+            sourceFormat,
+            targetFormat,
+          ),
+          dialogueValues:
+            sourceFormat === 'ass' && targetFormat === 'ass'
+              ? caption.dialogueValues
+              : undefined,
         })
       }
 
@@ -346,12 +430,16 @@ export async function mergeSubtitles(
     }
 
     if (allCaptions.length === 0) {
-      return { success: false, error: 'The selected files contain no subtitle entries.' }
+      return {
+        success: false,
+        error: 'The selected files contain no subtitle entries.',
+      }
     }
 
     const assSource = documents.find((document) => document.header)
     const assHeader = assSource?.header ?? defaultAssHeader()
-    const assFormatFields = assSource?.formatFields ?? DEFAULT_ASS_FORMAT_FIELDS
+    const assFormatFields =
+      assSource?.formatFields ?? DEFAULT_ASS_FORMAT_FIELDS
 
     const content =
       targetFormat === 'ass'
@@ -376,4 +464,3 @@ export async function mergeSubtitles(
     }
   }
 }
-
