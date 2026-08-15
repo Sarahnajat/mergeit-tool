@@ -9,26 +9,26 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
+import { Button } from "@/components/ui/button";
 export function ThemeToggle({ className }: { className?: string }) {
-  const {  setTheme } = useTheme();
+  const { setTheme } = useTheme();
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button
-          className={cn(
-            "rounded-full bg-background border border-border p-2 outline-none flex items-center justify-center cursor-pointer transition-colors hover:bg-muted",
-            className
-          )}
-        >
-          <Sun className="size-[18px] dark:hidden" />
-          <Moon className="size-[18px] hidden dark:block" />
-
-          <span className="sr-only">Change theme</span>
-        </button>
-      </DropdownMenuTrigger>
-
+      <DropdownMenuTrigger
+        render={
+          <Button
+            className={cn(
+              "rounded-full bg-background border border-border p-2 outline-none flex items-center justify-center cursor-pointer transition-colors hover:bg-muted",
+              className,
+            )}
+          >
+            <Sun className="size-[18px] dark:hidden" />
+            <Moon className="size-[18px] hidden dark:block" />
+            <span className="sr-only">Change theme</span>
+          </Button>
+        }
+      />
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => setTheme("light")}>
           <Sun />
