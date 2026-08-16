@@ -32,8 +32,6 @@ export interface SimpleFooterProps {
 
 export function FooterSection({
   brandName = "MergeIt",
-  brandHref = "/",
-  tagline = "Merge It, Split It, Convert It",
   links = [],
   socialLinks = [
     {

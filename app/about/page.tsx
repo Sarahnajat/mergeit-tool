@@ -9,7 +9,7 @@ import {
   ArrowRight,
   FileHeart,
   FileText,
-  Sparkles,
+ 
 } from "lucide-react";
 import { MotionDiv } from "@/lib/motion";
 import { Badge } from "@/components/ui/badge";
