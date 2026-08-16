@@ -36,7 +36,7 @@ const navigationData: NavigationSection[] = [
   
 ]
 
-const githubUrl = "https://github.com/sarahnajat/mergeit"
+const githubUrl = "https://github.com/Sarahnajat/mergeit-tool"
 
 function CollaborateButton({ className }: { className?: string }) {
   return (
